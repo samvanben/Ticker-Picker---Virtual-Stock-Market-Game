@@ -26,9 +26,9 @@ INSERT INTO stock (symbol) VALUES ('AMT');
 INSERT INTO stock (symbol) VALUES ('ATO');
 INSERT INTO stock (symbol) VALUES ('ATI');
 
-INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '20', 20, 5, 1);
-INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '10', 1, 2, 1);
-INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '15', 6, 4, 2);
-INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '30', 5, 1, 2);
+INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '20', 20, 3, 5, 1);
+INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '10', 1, 4,  2, 1);
+INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '15', 6, 5, 4, 2);
+INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '30', 5, 6, 1, 2);
 
 COMMIT TRANSACTION;
