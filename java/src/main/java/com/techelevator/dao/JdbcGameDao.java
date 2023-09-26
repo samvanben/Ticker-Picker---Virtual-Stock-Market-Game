@@ -11,6 +11,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,6 +107,21 @@ public class JdbcGameDao implements GameDao {
             }
         }
         return success;
+    }
+
+    @Override
+    public boolean updateGame(Game updatedGame, int gameId) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteGame(int gameId) {
+        return false;
+    }
+
+    @Override
+    public BigDecimal getAvailableBalanceByUserGame(int userId, int gameId) {
+        return null;
     }
 
     private Game mapRowToGame(SqlRowSet results) {

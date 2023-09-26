@@ -52,6 +52,41 @@ public class JdbcStockDao implements StockDao {
         return stock;
     }
 
+    @Override
+    public Stock getStockByStockId(int stockId) {
+        return null;
+    }
+
+    @Override
+    public List<Stock> getStocksByOneUser(int userId) {
+        return null;
+    }
+
+    @Override
+    public List<Stock> getStocksByAllUsersOfGame(int gameId) {
+        return null;
+    }
+
+    @Override
+    public List<Stock> getStocksByOneUserOfGame(int userId, int gameId) {
+        return null;
+    }
+
+    @Override
+    public int createStock(String symbol, String company_name) {
+        return 0;
+    }
+
+    @Override
+    public boolean updateStock(Stock updatedStock, int stockId) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteStock(int stockId) {
+        return false;
+    }
+
     private Stock mapRowToStock(SqlRowSet results) {
         Stock stock = new Stock();
         stock.setStockId(results.getInt("stock_id"));

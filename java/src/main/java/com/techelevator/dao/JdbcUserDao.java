@@ -1,5 +1,6 @@
 package com.techelevator.dao;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -36,7 +37,7 @@ public class JdbcUserDao implements UserDao {
         return userId;
     }
 
-	@Override
+    @Override
 	public User getUserById(int userId) {
 		String sql = "SELECT * FROM users WHERE user_id = ?";
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
@@ -79,6 +80,26 @@ public class JdbcUserDao implements UserDao {
         String ssRole = role.toUpperCase().startsWith("ROLE_") ? role.toUpperCase() : "ROLE_" + role.toUpperCase();
 
         return jdbcTemplate.update(insertUserSql, username, password_hash, ssRole) == 1;
+    }
+
+    @Override
+    public BigDecimal getProfileBalanceByUserId(int userId) {
+        return null;
+    }
+
+    @Override
+    public BigDecimal getProfileBalanceByUsername(String username) {
+        return null;
+    }
+
+    @Override
+    public boolean updateUser(User updatedUser, int userId) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteUser(int userId) {
+        return false;
     }
 
     private User mapRowToUser(SqlRowSet rs) {
