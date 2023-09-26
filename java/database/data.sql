@@ -20,11 +20,16 @@ INSERT INTO game_user (game_id, user_id) VALUES ('2','4');
 INSERT INTO game_user (game_id, user_id) VALUES ('2','5');
 INSERT INTO game_user (game_id, user_id) VALUES ('2','6');
 
-INSERT INTO stock (symbol) VALUES ('AAPL');
-INSERT INTO stock (symbol) VALUES ('ACN');
-INSERT INTO stock (symbol) VALUES ('AMT');
-INSERT INTO stock (symbol) VALUES ('ATO');
-INSERT INTO stock (symbol) VALUES ('ATI');
+INSERT INTO stock (symbol, company_name) VALUES ('AAPL', 'Apple');
+INSERT INTO stock (symbol, company_name) VALUES ('MSFT', 'Microsoft');
+INSERT INTO stock (symbol, company_name) VALUES ('AMZN', 'Amazon');
+INSERT INTO stock (symbol, company_name) VALUES ('TSLA', 'Tesla');
+INSERT INTO stock (symbol, company_name) VALUES ('NVDA', 'NVIDIA');
+INSERT INTO stock (symbol, company_name) VALUES ('GOOGL', 'Alphabet Class A');
+INSERT INTO stock (symbol, company_name) VALUES ('JPM', 'JPMorgan Chase');
+INSERT INTO stock (symbol, company_name) VALUES ('COST', 'Costco');
+INSERT INTO stock (symbol, company_name) VALUES ('PEP', 'PepsiCo');
+INSERT INTO stock (symbol, company_name) VALUES ('ADBE', 'Adobe');
 
 INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '20', 20, 3, 5, 1);
 INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '10', 1, 4,  2, 1);
