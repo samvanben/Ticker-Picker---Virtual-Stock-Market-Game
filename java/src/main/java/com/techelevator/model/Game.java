@@ -2,68 +2,80 @@ package com.techelevator.model;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Game {
-    @NotEmpty
     private int gameId;
     @NotEmpty
     private String nameOfGame;
     @NotEmpty
     private LocalDate startDate;
-    @NotEmpty
     private LocalDate endDate;
     @NotEmpty
     private String ownerName;
+    private boolean isRealGame;
+    private List<User> listOfGamePlayers = new ArrayList<>();
+    private List<User> listOfPlayersInOrder = new ArrayList<>();
     @NotEmpty
-    private List[] listOfPlayers;
-    @NotEmpty
-    private boolean currentGame = true;
-    @NotEmpty
+    private boolean currentGame;
     private int daysOfPlaying;
-    @NotEmpty
-    private String currentGameBoard;
+
     public Game() {
     }
 
-    public Game(int gameId, String nameOfGame, LocalDate startDate, LocalDate endDate, String ownerName, List[] listOfPlayers, boolean currentGame, int daysOfPlaying, String currentGameBoard) {
-        this.gameId = gameId;
+    public Game(String nameOfGame, String ownerName, boolean isRealGame) {
+        this.nameOfGame = nameOfGame;
+        this.startDate = LocalDate.now();
+        this.ownerName = ownerName;
+        this.isRealGame = isRealGame;
+        this.currentGame = true;
+        this.daysOfPlaying = 0;
+    }
+
+    public Game(String nameOfGame, LocalDate startDate, LocalDate endDate, String ownerName,
+                boolean isRealGame, List<User> listOfGamePlayers) {
         this.nameOfGame = nameOfGame;
         this.startDate = startDate;
         this.endDate = endDate;
         this.ownerName = ownerName;
-        this.listOfPlayers = listOfPlayers;
-        this.currentGame = currentGame;
-        this.daysOfPlaying = daysOfPlaying;
-        this.currentGameBoard = currentGameBoard;
+        this.isRealGame = isRealGame;
+        this.listOfGamePlayers = listOfGamePlayers;
+        this.currentGame = true;
     }
 
-    public Game(String nameOfGame, LocalDate startDate, LocalDate endDate, String ownerName, List[] listOfPlayers, boolean currentGame, int daysOfPlaying, String currentGameBoard) {
-        this.nameOfGame = nameOfGame;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.ownerName = ownerName;
-        this.listOfPlayers = listOfPlayers;
-        this.currentGame = currentGame;
-        this.daysOfPlaying = daysOfPlaying;
-        this.currentGameBoard = currentGameBoard;
+    public boolean isRealGame() {
+        return isRealGame;
     }
 
-    public int getDaysOfPlaying() {
-        return daysOfPlaying;
+    public void setRealGame(boolean realGame) {
+        isRealGame = realGame;
+    }
+
+    public void setListOfGamePlayers(ArrayList<User> listOfGamePlayers) {
+        this.listOfGamePlayers = listOfGamePlayers;
+    }
+
+    public List<User> getListOfGamePlayers() {
+        return listOfGamePlayers;
+    }
+
+    public List<User> getGameLeaderBoardList(){
+        sortPlayers(this.listOfGamePlayers);
+        listOfPlayersInOrder = listOfGamePlayers;
+        return listOfPlayersInOrder;
+    }
+
+    public long getDaysOfPlaying() {
+        long days = Math.abs(ChronoUnit.DAYS.between(this.startDate, this.endDate));
+        return days;
     }
 
     public void setDaysOfPlaying(int daysOfPlaying) {
         this.daysOfPlaying = daysOfPlaying;
-    }
-
-    public String getCurrentGameBoard() {
-        return currentGameBoard;
-    }
-
-    public void setCurrentGameBoard(String currentGameBoard) {
-        this.currentGameBoard = currentGameBoard;
     }
 
     public int getGameId() {
@@ -106,14 +118,6 @@ public class Game {
         this.ownerName = ownerName;
     }
 
-    public List[] getListOfPlayers() {
-        return listOfPlayers;
-    }
-
-    public void setListOfPlayers(List[] listOfPlayers) {
-        this.listOfPlayers = listOfPlayers;
-    }
-
     public boolean isCurrentGame() {
         return currentGame;
     }
@@ -130,10 +134,14 @@ public class Game {
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", ownerName='" + ownerName + '\'' +
-                ", listOfPlayers=" + Arrays.toString(listOfPlayers) +
+                ", isRealGame=" + isRealGame +
+                ", listOfGamePlayers=" + listOfGamePlayers +
                 ", currentGame=" + currentGame +
                 ", daysOfPlaying=" + daysOfPlaying +
-                ", currentGameBoard='" + currentGameBoard + '\'' +
                 '}';
+    }
+
+    private void sortPlayers(List listOfGamePlayers){
+        Collections.sort(listOfGamePlayers);
     }
 }

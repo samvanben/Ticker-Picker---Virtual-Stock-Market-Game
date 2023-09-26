@@ -4,47 +4,34 @@ import javax.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
 
 public class Stock {
-    @NotEmpty
     private int stockId;
     @NotEmpty
     private String symbol;
-    @NotEmpty
     private BigDecimal askPrice;
-    @NotEmpty
     private BigDecimal bidPrice;
     @NotEmpty
     private String companyName;
-    @NotEmpty
-    private BigDecimal exchange;
-    @NotEmpty
-    private String industry;
-    @NotEmpty
     private String description;
-    @NotEmpty
     private String CEO;
 
     public Stock() {
     }
 
-    public Stock(int stockId, String symbol, BigDecimal askPrice, BigDecimal bidPrice, String companyName, BigDecimal exchange, String industry, String description, String CEO) {
+    public Stock(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public Stock(String symbol, BigDecimal bidPrice) {
+        this.symbol = symbol;
+        this.bidPrice = bidPrice;
+    }
+
+    public Stock(int stockId, String symbol, BigDecimal askPrice, BigDecimal bidPrice, String companyName, String description, String CEO) {
         this.stockId = stockId;
         this.symbol = symbol;
         this.askPrice = askPrice;
         this.bidPrice = bidPrice;
         this.companyName = companyName;
-        this.exchange = exchange;
-        this.industry = industry;
-        this.description = description;
-        this.CEO = CEO;
-    }
-
-    public Stock(String symbol, BigDecimal askPrice, BigDecimal bidPrice, String companyName, BigDecimal exchange, String industry, String description, String CEO) {
-        this.symbol = symbol;
-        this.askPrice = askPrice;
-        this.bidPrice = bidPrice;
-        this.companyName = companyName;
-        this.exchange = exchange;
-        this.industry = industry;
         this.description = description;
         this.CEO = CEO;
     }
@@ -89,22 +76,6 @@ public class Stock {
         this.companyName = companyName;
     }
 
-    public BigDecimal getExchange() {
-        return exchange;
-    }
-
-    public void setExchange(BigDecimal exchange) {
-        this.exchange = exchange;
-    }
-
-    public String getIndustry() {
-        return industry;
-    }
-
-    public void setIndustry(String industry) {
-        this.industry = industry;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -129,8 +100,6 @@ public class Stock {
                 ", askPrice=" + askPrice +
                 ", bidPrice=" + bidPrice +
                 ", companyName='" + companyName + '\'' +
-                ", exchange=" + exchange +
-                ", industry='" + industry + '\'' +
                 ", description='" + description + '\'' +
                 ", CEO='" + CEO + '\'' +
                 '}';
