@@ -18,7 +18,6 @@ public class Game {
     @NotEmpty
     private String ownerName;
     private boolean isRealGame;
-    private List<User> listOfGamePlayers = new ArrayList<>();
     @NotEmpty
     private boolean currentGame;
     private int daysOfPlaying;
@@ -36,13 +35,12 @@ public class Game {
     }
 
     public Game(String nameOfGame, LocalDate startDate, LocalDate endDate, String ownerName,
-                boolean isRealGame, List<User> listOfGamePlayers) {
+                boolean isRealGame) {
         this.nameOfGame = nameOfGame;
         this.startDate = startDate;
         this.endDate = endDate;
         this.ownerName = ownerName;
         this.isRealGame = isRealGame;
-        this.listOfGamePlayers = listOfGamePlayers;
         this.currentGame = true;
     }
 
@@ -52,14 +50,6 @@ public class Game {
 
     public void setRealGame(boolean realGame) {
         isRealGame = realGame;
-    }
-
-    public void setListOfGamePlayers(ArrayList<User> listOfGamePlayers) {
-        this.listOfGamePlayers = listOfGamePlayers;
-    }
-
-    public List<User> getListOfGamePlayers() {
-        return listOfGamePlayers;
     }
 
     public long getDaysOfPlaying() {
@@ -128,7 +118,6 @@ public class Game {
                 ", endDate=" + endDate +
                 ", ownerName='" + ownerName + '\'' +
                 ", isRealGame=" + isRealGame +
-                ", listOfGamePlayers=" + listOfGamePlayers +
                 ", currentGame=" + currentGame +
                 ", daysOfPlaying=" + daysOfPlaying +
                 '}';
