@@ -5,16 +5,17 @@ import com.techelevator.model.Game;
 import com.techelevator.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class JdbcGameDao implements GameDao {
@@ -39,6 +40,23 @@ public class JdbcGameDao implements GameDao {
             throw new DaoException( "cannot connect to server or database", e);
         }
         return players;
+    }
+
+    @Override
+    public Map<String, BigDecimal> getOrderedPlayersByGameId(int gameId) {
+        Map<String, BigDecimal> orderedMap = new LinkedHashMap<>();
+        String sql = "SELECT total_balance, username FROM game_user JOIN users ON users.user_id=game_user.user_id WHERE game_id = ? ORDER BY total_balance desc; ";
+        try{
+            SqlRowSet SqlRowSet = jdbcTemplate.queryForRowSet(sql);
+            while (SqlRowSet.next()){
+                BigDecimal totalBalance = SqlRowSet.getBigDecimal("total_balance");
+                String username = SqlRowSet.getNString("username");
+                orderedMap.put(username, totalBalance);
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return orderedMap;
     }
 
     @Override
@@ -90,6 +108,107 @@ public class JdbcGameDao implements GameDao {
     }
 
     @Override
+    public List<Game> getAllGames() {
+        return null;
+    }
+
+    @Override
+    public BigDecimal getGameUserAvailableBalance(int gameId, int userId) {
+        String sql = "SELECT available_balance FROM game_user WHERE game_id=? AND user_id=?; ";
+        BigDecimal availableBalance;
+        try {
+            availableBalance = jdbcTemplate.queryForObject(sql, BigDecimal.class, gameId, userId);
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return availableBalance;
+    }
+
+    @Override
+    public BigDecimal getGameUserTotalBalance(int gameId, int userId) {
+        String sql = "SELECT total_balance FROM game_user WHERE game_id=? AND user_id=?; ";
+        BigDecimal totalBalance;
+        try {
+            totalBalance = jdbcTemplate.queryForObject(sql, BigDecimal.class, gameId, userId);
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return totalBalance;
+    }
+
+    @Override
+    public boolean subtractFromGameUserAvailableBalance(double amount, int gameId, int userId) {
+        boolean success = false;
+        String sql = "UPDATE game_user SET available_balance = available_balance - ? WHERE game_id=? AND user_id=?; ";
+        try {
+            int numberOfRows = jdbcTemplate.update(sql, amount, gameId, userId);
+            if (numberOfRows == 0 ){
+                throw new DaoException("Zero rows affected, expected at least one");
+            }
+            success = true;
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        } catch (DataIntegrityViolationException e){
+            throw new DaoException("data integrity violation", e);
+        }
+        return success;
+    }
+
+    @Override
+    public boolean addToGameUserAvailableBalance(double amount, int gameId, int userId) {
+        boolean success = false;
+        String sql = "UPDATE game_user SET available_balance = available_balance + ? WHERE game_id=? AND user_id=?; ";
+        try {
+            int numberOfRows = jdbcTemplate.update(sql, amount, gameId, userId);
+            if (numberOfRows == 0 ){
+                throw new DaoException("Zero rows affected, expected at least one");
+            }
+            success = true;
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        } catch (DataIntegrityViolationException e){
+            throw new DaoException("data integrity violation", e);
+        }
+        return success;
+    }
+
+    @Override
+    public boolean subtractFromGameUserTotalBalance(double amount, int gameId, int userId) {
+        boolean success = false;
+        String sql = "UPDATE game_user SET total_balance = total_balance - ? WHERE game_id=? AND user_id=?; ";
+        try {
+            int numberOfRows = jdbcTemplate.update(sql, amount, gameId, userId);
+            if (numberOfRows == 0 ){
+                throw new DaoException("Zero rows affected, expected at least one");
+            }
+            success = true;
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        } catch (DataIntegrityViolationException e){
+            throw new DaoException("data integrity violation", e);
+        }
+        return success;
+    }
+
+    @Override
+    public boolean addToFromGameUserTotalBalance(double amount, int gameId, int userId) {
+        boolean success = false;
+        String sql = "UPDATE game_user SET total_balance = total_balance + ? WHERE game_id=? AND user_id=?; ";
+        try {
+            int numberOfRows = jdbcTemplate.update(sql, amount, gameId, userId);
+            if (numberOfRows == 0 ){
+                throw new DaoException("Zero rows affected, expected at least one");
+            }
+            success = true;
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        } catch (DataIntegrityViolationException e){
+            throw new DaoException("data integrity violation", e);
+        }
+        return success;
+    }
+
+    @Override
     public boolean addPlayerToGame(List<User> users, int gameId) {
         boolean success = false;
         String sql = "INSERT INTO game_user (game_id, user_id) VALUES (?, ?)";
@@ -124,6 +243,24 @@ public class JdbcGameDao implements GameDao {
         return null;
     }
 
+    @Override
+    public boolean changeGameOwner(int gameId, int userId) {
+        boolean success = false;
+        String sql = "UPDATE game SET owner_name = (SELECT username FROM users WHERE user_id=? ) WHERE game_id=? ;";
+        try {
+            int numberOfRows = jdbcTemplate.update(sql, userId, gameId);
+            if (numberOfRows == 0 ){
+                throw new DaoException("Zero rows affected, expected at least one");
+            }
+            success = true;
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        } catch (DataIntegrityViolationException e){
+            throw new DaoException("data integrity violation", e);
+        }
+        return success;
+    }
+
     private Game mapRowToGame(SqlRowSet results) {
         Game game = new Game();
         game.setGameId((results.getInt("game_id")));
@@ -142,5 +279,4 @@ public class JdbcGameDao implements GameDao {
         user.setPassword(results.getString("password_hash"));
         return user;
     }
-
 }

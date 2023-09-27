@@ -4,54 +4,47 @@ import javax.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
 
 public class Transaction {
-    @NotEmpty
     private int transactionId;
     @NotEmpty
     private int stockId;
     @NotEmpty
     private int gameId;
     @NotEmpty
-    private int id;
+    private int userId;
     @NotEmpty
     private BigDecimal price;
     @NotEmpty
-    private String buyOrSell;
+    private String transactionType;
     @NotEmpty
     private int numberOfShares;
-    @NotEmpty
     private BigDecimal totalBalance;
-    @NotEmpty
     private BigDecimal availableBalance;
-    @NotEmpty
-    private int stock;
 
     public Transaction() {
 
     }
 
-    public Transaction(int transactionId, int stockId, int gameId, int id, BigDecimal price, String buyOrSell, int numberOfShares, BigDecimal totalBalance, BigDecimal availableBalance, int stock) {
+    public Transaction(int transactionId, int stockId, int gameId, int userId, BigDecimal price, String transactionType, int numberOfShares, BigDecimal totalBalance, BigDecimal availableBalance) {
         this.transactionId = transactionId;
         this.stockId = stockId;
         this.gameId = gameId;
-        this.id = id;
+        this.userId = userId;
         this.price = price;
-        this.buyOrSell = buyOrSell;
+        this.transactionType = transactionType;
         this.numberOfShares = numberOfShares;
         this.totalBalance = totalBalance;
         this.availableBalance = availableBalance;
-        this.stock = stock;
     }
 
-    public Transaction(int stockId, int gameId, int id, BigDecimal price, String buyOrSell, int numberOfShares, BigDecimal totalBalance, BigDecimal availableBalance, int stock) {
+    public Transaction(int stockId, int gameId, int userId, BigDecimal price, String transactionType, int numberOfShares, BigDecimal totalBalance, BigDecimal availableBalance) {
         this.stockId = stockId;
         this.gameId = gameId;
-        this.id = id;
+        this.userId = userId;
         this.price = price;
-        this.buyOrSell = buyOrSell;
+        this.transactionType = transactionType;
         this.numberOfShares = numberOfShares;
         this.totalBalance = totalBalance;
         this.availableBalance = availableBalance;
-        this.stock = stock;
     }
 
     public int getTransactionId() {
@@ -78,12 +71,12 @@ public class Transaction {
         this.gameId = gameId;
     }
 
-    public int getId() {
-        return id;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public BigDecimal getPrice() {
@@ -94,12 +87,12 @@ public class Transaction {
         this.price = price;
     }
 
-    public String getBuyOrSell() {
-        return buyOrSell;
+    public String getTransactionType() {
+        return transactionType;
     }
 
-    public void setBuyOrSell(String buyOrSell) {
-        this.buyOrSell = buyOrSell;
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
     }
 
     public int getNumberOfShares() {
@@ -126,11 +119,4 @@ public class Transaction {
         this.availableBalance = availableBalance;
     }
 
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
 }

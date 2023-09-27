@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface TransactionDao {
     List<Transaction> getAllTransactionsAsAdmin();
-    List<Stock> getTransactionsByUserGameStock(int userId, int gameId, int stockId);
-    List<Stock> getTransactionsByUserGame(int userId, int gameId);
-    List<Stock> getTransactionsByUserId(int userId);
-    List<Stock> getTransactionsByUsername(String username);
-    List<Stock> getTransactionsByUsernameGame(String username, int gameId);
+    List<Transaction> getTransactionsByUserGameStock(int userId,  int stockId, int gameId);
+    List<Transaction> getTransactionsByUserGame(int userId, int gameId);
+    List<Transaction> getTransactionsByUserId(int userId);
+    List<Transaction> getTransactionsByUsername(String username);
+    List<Transaction> getTransactionsByUsernameGame(String username, int gameId);
 
     int createTransaction(Transaction transactionToCreate);
     boolean updateTransaction(Transaction transactionToUpdate, int transactionId);

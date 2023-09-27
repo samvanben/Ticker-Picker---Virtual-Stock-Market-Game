@@ -19,7 +19,6 @@ public class Game {
     private String ownerName;
     private boolean isRealGame;
     private List<User> listOfGamePlayers = new ArrayList<>();
-    private List<User> listOfPlayersInOrder = new ArrayList<>();
     @NotEmpty
     private boolean currentGame;
     private int daysOfPlaying;
@@ -61,12 +60,6 @@ public class Game {
 
     public List<User> getListOfGamePlayers() {
         return listOfGamePlayers;
-    }
-
-    public List<User> getGameLeaderBoardList(){
-        sortPlayers(this.listOfGamePlayers);
-        listOfPlayersInOrder = listOfGamePlayers;
-        return listOfPlayersInOrder;
     }
 
     public long getDaysOfPlaying() {
@@ -141,7 +134,4 @@ public class Game {
                 '}';
     }
 
-    private void sortPlayers(List listOfGamePlayers){
-        Collections.sort(listOfGamePlayers);
-    }
 }

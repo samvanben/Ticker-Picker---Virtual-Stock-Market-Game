@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.techelevator.exception.DaoException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,7 +36,6 @@ public class JdbcUserDao implements UserDao {
         } catch (EmptyResultDataAccessException e) {
             throw new UsernameNotFoundException("User " + username + " was not found.");
         }
-
         return userId;
     }
 
@@ -84,22 +86,83 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public BigDecimal getProfileBalanceByUserId(int userId) {
-        return null;
+        BigDecimal profileBalance = new BigDecimal(0);
+        String sql = "SELECT profile_balance FROM users WHERE user_id=? ;";
+        try{
+            SqlRowSet SqlRowSet = jdbcTemplate.queryForRowSet(sql, userId);
+            if (SqlRowSet.next()){
+                profileBalance = SqlRowSet.getBigDecimal("profile_balance");
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        } catch (DataIntegrityViolationException e){
+            throw new DaoException("data integrity violation", e);
+        }
+        return profileBalance;
     }
 
     @Override
     public BigDecimal getProfileBalanceByUsername(String username) {
-        return null;
+        BigDecimal profileBalance = new BigDecimal(0);
+        String sql = "SELECT profile_balance FROM users WHERE username=? ;";
+        try{
+            SqlRowSet SqlRowSet = jdbcTemplate.queryForRowSet(sql, username);
+            if (SqlRowSet.next()){
+                profileBalance = SqlRowSet.getBigDecimal("profile_balance");
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        } catch (DataIntegrityViolationException e){
+            throw new DaoException("data integrity violation", e);
+        }
+        return profileBalance;
     }
 
     @Override
     public boolean updateUser(User updatedUser, int userId) {
-        return false;
+        boolean success = false;
+        String sqlUpdateRelatedGameOwner = "UPDATE game SET owner_name='admin' WHERE owner_name=(SELECT username FROM users WHERE user_id=? ); ";
+        String sqlUpdateUserInfo = "UPDATE users SET username=?, password_hash=?, role=?, profile_balance=?, first_name=?, last_name=? WHERE user_id=? ;";
+        try {
+            jdbcTemplate.update(sqlUpdateRelatedGameOwner, userId);
+            int numberOfRows = jdbcTemplate.update(sqlUpdateUserInfo, updatedUser.getUsername(), updatedUser.getPassword(), updatedUser.getRole(), updatedUser.getProfileBalance(),
+                    updatedUser.getFirstName(), updatedUser.getLastName(), userId);
+            if (numberOfRows == 0 ){
+                throw new DaoException("Zero rows affected, expected at least one");
+            }
+            success = true;
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        } catch (DataIntegrityViolationException e){
+            throw new DaoException("data integrity violation", e);
+        }
+        return success;
     }
 
     @Override
     public boolean deleteUser(int userId) {
-        return false;
+        boolean success = false;
+        String sqlDeleteFromGameUser = "DELETE FROM game_user WHERE user_id = ?; " +
+                "DELETE FROM game_user WHERE game_id = (SELECT game_id FROM game WHERE owner_name = (SELECT username FROM users WHERE user_id = ?));";
+        String sqlDeleteFromTransaction = "DELETE FROM transaction WHERE user_id = ?;" +
+                "DELETE FROM transaction WHERE game_id = (SELECT game_id FROM game WHERE owner_name = (SELECT username FROM users WHERE user_id = ?));";
+        String sqlDeleteFromGame = "DELETE FROM game WHERE owner_name = (SELECT username FROM users WHERE user_id = ?);";
+        String sqlDeleteFromUsers = "DELETE FROM users WHERE user_id = ?";
+        try {
+            jdbcTemplate.update(sqlDeleteFromGameUser, userId, userId);
+            jdbcTemplate.update(sqlDeleteFromTransaction, userId, userId);
+            jdbcTemplate.update(sqlDeleteFromGame, userId);
+            int numberOfRows = jdbcTemplate.update(sqlDeleteFromUsers, userId);
+            if (numberOfRows == 0 ){
+                throw new DaoException("Zero rows affected, expected at least one");
+            }
+            success = true;
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        } catch (DataIntegrityViolationException e){
+            throw new DaoException("data integrity violation", e);
+        }
+        return success;
     }
 
     private User mapRowToUser(SqlRowSet rs) {

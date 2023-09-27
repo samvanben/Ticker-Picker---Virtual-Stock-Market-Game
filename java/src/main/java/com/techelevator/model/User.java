@@ -2,6 +2,7 @@ package com.techelevator.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -12,6 +13,8 @@ public class User {
    private String password;
    @JsonIgnore
    private boolean activated;
+   @NotEmpty
+   private String role;
    private String firstName;
    private String lastName;
    private Set<Authority> authorities = new HashSet<>();
@@ -56,6 +59,14 @@ public class User {
 
    public void setPassword(String password) {
       this.password = password;
+   }
+
+   public String getRole() {
+      return role;
+   }
+
+   public void setRole(String role) {
+      this.role = role;
    }
 
    public boolean isActivated() {
