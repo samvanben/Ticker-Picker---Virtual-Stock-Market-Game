@@ -1,6 +1,5 @@
 package com.techelevator.controller;
 
-<<<<<<< HEAD
 import com.techelevator.dao.GameDao;
 import com.techelevator.dao.StockDao;
 import com.techelevator.dao.UserDao;
@@ -20,11 +19,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller
-@RestController
-//@PreAuthorize("isAuthenticated()")
-@RequestMapping(path = "/api/stocks")
-=======
 import com.techelevator.api.StocksApi;
 import com.techelevator.model.StockApiDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +26,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Controller
 @RestController
->>>>>>> main
+//@PreAuthorize("isAuthenticated()")
+@RequestMapping(path = "/api/stocks")
 public class StockController {
     private StockDao stockDao;
     private UserDao userDao;
@@ -50,9 +46,9 @@ public class StockController {
         return stockDao.getAllStocks();
     }
 
-    @RequestMapping(path = "/{stockSymbol}", method = RequestMethod.GET)
-    public Stock getStockBySymbol(@PathVariable String symbol){
-        return stockDao.getStockBySymbol(symbol);
+    @RequestMapping(path = "/{stockId}", method = RequestMethod.GET)
+    public Stock getStockBySymbol(@PathVariable int stockId){
+        return stockDao.getStockByStockId(stockId);
     }
 
     @RequestMapping(path = "/list-my-stocks", method = RequestMethod.GET)
@@ -87,12 +83,12 @@ public class StockController {
         return totalBalance;
     }
 
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @RequestMapping(path = "", method = RequestMethod.POST)
-//    public boolean create(@Valid @RequestBody Stock stock) {
-//        gameDao.createGame()
-//        return true;
-//    }
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(method = RequestMethod.POST)
+    public boolean createStock(@Valid @RequestBody Stock stock) {
+        stockDao.createStock(stock);
+        return true;
+    }
 
     @RequestMapping(path = "/{stockSymbol}", method = RequestMethod.PUT)
     public boolean update(@Valid @RequestBody Stock stockToUpdate, @PathVariable int stockId) {
@@ -104,21 +100,17 @@ public class StockController {
         }
     }
 
-<<<<<<< HEAD
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(path = "/{stockSymbol}", method = RequestMethod.DELETE)
     public boolean delete(@Valid @PathVariable int stockId) {
         return stockDao.deleteStock(stockId);
     }
-=======
-    @Autowired
-    private StocksApi stocksApi;
+
+    private StocksApi stocksApi = new StocksApi();
 
     @GetMapping(path = "/stocks")
     public StockApiDTO getStocks(){
         return stocksApi.stockData();
     }
 
-
->>>>>>> main
 }

@@ -24,10 +24,12 @@ import java.util.List;
 public class GameController {
     private UserDao userDao;
     private GameDao gameDao;
+    private StockDao stockDao;
 
-    public GameController(UserDao userDao, GameDao gameDao) {
+    public GameController(UserDao userDao, GameDao gameDao, StockDao stockDao) {
         this.userDao = userDao;
         this.gameDao = gameDao;
+        this.stockDao = stockDao;
     }
 
     @RequestMapping(path = "", method = RequestMethod.GET)

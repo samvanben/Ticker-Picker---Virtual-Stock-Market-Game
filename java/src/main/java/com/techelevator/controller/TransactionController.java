@@ -23,60 +23,60 @@ import java.util.List;
 @PreAuthorize("isAuthenticated()")
 @RequestMapping(path = "/api/transactions")
 public class TransactionController {
-    private UserDao userDao;
-    private TransactionDao transactionDao;
-
-    public TransactionController(TransactionDao transactionDao, UserDao userDao) {
-        this.transactionDao = transactionDao;
-        this.userDao = userDao;
-    }
-
-    @RequestMapping(path = "/admin", method = RequestMethod.GET)
-    public List<Transaction> listAllTransactionAsAdmin(){
-        return transactionDao.getAllTransactionsAsAdmin();
-    }
-
-    @RequestMapping(path = "", method = RequestMethod.GET)
-    public List<Transaction> listAllTransactionsOfCurrentUser(Principal user){
-        String username = user.getName();
-        int userId = userDao.findIdByUsername(username);
-        return transactionDao.getTransactionsByUserId(userId);
-    }
-
-    @RequestMapping(path = "/{gameId}", method = RequestMethod.GET)
-    public List<Transaction> listTransactionsOfCurrentUserByGameId(@PathVariable int gameId, Principal user){
-        String username = user.getName();
-        int userId = userDao.findIdByUsername(username);
-        return transactionDao.getTransactionsByUserGame(userId, gameId);
-    }
-
-    @RequestMapping(path = "/{gameId}/{stockId}", method = RequestMethod.GET)
-    public List<Transaction> listTransactionsOfCurrentUserByGameIdAndStockId(@PathVariable int gameId, @PathVariable int stockId, Principal user){
-        String username = user.getName();
-        int userId = userDao.findIdByUsername(username);
-        return transactionDao.getTransactionsByUserGameStock(userId, stockId, gameId);
-    }
-
-    @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(path = "", method = RequestMethod.POST)
-    public boolean createNewTransaction(@Valid @RequestBody Transaction transaction) {
-        transactionDao.createTransaction(transaction);
-        return true;
-    }
-
-    @RequestMapping(path = "/{transactionId}", method = RequestMethod.PUT)
-    public boolean updateTransaction(@Valid @RequestBody Transaction transactionToUpdate, @PathVariable int transactionId) {
-        transactionToUpdate.setTransactionId(transactionId);
-        try {
-            return transactionDao.updateTransaction(transactionToUpdate, transactionId);
-        } catch (DaoException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Transaction Not Found");
-        }
-    }
-
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(path = "/{transactionId}", method = RequestMethod.DELETE)
-    public boolean deleteTransaction(@Valid @PathVariable int transactionId) {
-        return transactionDao.deleteTransaction(transactionId);
-    }
+//    private UserDao userDao;
+//    private TransactionDao transactionDao;
+//
+//    public TransactionController(TransactionDao transactionDao, UserDao userDao) {
+//        this.transactionDao = transactionDao;
+//        this.userDao = userDao;
+//    }
+//
+//    @RequestMapping(path = "/admin", method = RequestMethod.GET)
+//    public List<Transaction> listAllTransactionAsAdmin(){
+//        return transactionDao.getAllTransactionsAsAdmin();
+//    }
+//
+//    @RequestMapping(path = "", method = RequestMethod.GET)
+//    public List<Transaction> listAllTransactionsOfCurrentUser(Principal user){
+//        String username = user.getName();
+//        int userId = userDao.findIdByUsername(username);
+//        return transactionDao.getTransactionsByUserId(userId);
+//    }
+//
+//    @RequestMapping(path = "/{gameId}", method = RequestMethod.GET)
+//    public List<Transaction> listTransactionsOfCurrentUserByGameId(@PathVariable int gameId, Principal user){
+//        String username = user.getName();
+//        int userId = userDao.findIdByUsername(username);
+//        return transactionDao.getTransactionsByUserGame(userId, gameId);
+//    }
+//
+//    @RequestMapping(path = "/{gameId}/{stockId}", method = RequestMethod.GET)
+//    public List<Transaction> listTransactionsOfCurrentUserByGameIdAndStockId(@PathVariable int gameId, @PathVariable int stockId, Principal user){
+//        String username = user.getName();
+//        int userId = userDao.findIdByUsername(username);
+//        return transactionDao.getTransactionsByUserGameStock(userId, stockId, gameId);
+//    }
+//
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @RequestMapping(path = "", method = RequestMethod.POST)
+//    public boolean createNewTransaction(@Valid @RequestBody Transaction transaction) {
+//        transactionDao.createTransaction(transaction);
+//        return true;
+//    }
+//
+//    @RequestMapping(path = "/{transactionId}", method = RequestMethod.PUT)
+//    public boolean updateTransaction(@Valid @RequestBody Transaction transactionToUpdate, @PathVariable int transactionId) {
+//        transactionToUpdate.setTransactionId(transactionId);
+//        try {
+//            return transactionDao.updateTransaction(transactionToUpdate, transactionId);
+//        } catch (DaoException e) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Transaction Not Found");
+//        }
+//    }
+//
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    @RequestMapping(path = "/{transactionId}", method = RequestMethod.DELETE)
+//    public boolean deleteTransaction(@Valid @PathVariable int transactionId) {
+//        return transactionDao.deleteTransaction(transactionId);
+//    }
 }
