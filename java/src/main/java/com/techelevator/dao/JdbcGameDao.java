@@ -229,13 +229,42 @@ public class JdbcGameDao implements GameDao {
     }
 
     @Override
-    public boolean updateGame(Game updatedGame, int gameId) {
-        return false;
+    public Game updateGame(Game updatedGame, int gameId) {
+        Game newGame = null;
+        boolean success = false;
+        String sql = "UPDATE game SET(name_of_game = ?, game_start_date = ?, game-end_date = ?, owner_name = ?, is_real_game = ?) WHERE game_id = ?;";
+        try{
+            int numberOfRow = jdbcTemplate.update(sql, updatedGame.getNameOfGame(), updatedGame.getStartDate(), updatedGame.getEndDate(), updatedGame.getOwnerName(), updatedGame.isRealGame(), gameId);
+            if(numberOfRow == 0){
+                throw new DaoException("No rows affected");
+            }else{
+                newGame = getGameByGameId(gameId);
+                success = true;
+            }
+        }catch(CannotGetJdbcConnectionException e){
+            throw new DaoException("No access");
+        }catch(DataIntegrityViolationException e){
+            throw new DaoException("dtae integrity violation");
+        }
+
+
+
+        return newGame;
+
     }
 
     @Override
-    public boolean deleteGame(int gameId) {
-        return false;
+    public int deleteGame(int gameId) {
+        int numberOfRows = 0;
+        String sql = "DELETE FROM game WHERE game_id = ?;";
+        try {
+            numberOfRows = jdbcTemplate.update(sql, gameId);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+        return numberOfRows;
     }
 
     @Override
