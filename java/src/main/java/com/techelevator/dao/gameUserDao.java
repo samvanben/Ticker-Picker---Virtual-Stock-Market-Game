@@ -6,8 +6,9 @@ import java.util.List;
 
 public interface gameUserDao {
 
+    List<gameUser> getGameUserByGameId(int gameId);
 
-    boolean createGameUser();
-    boolean updateGameUser();
-    boolean deleteGameUser();
+    int createGameUser(gameUser GameUserToCreate);
+    boolean updateGameUser(gameUser updatedGameUser, int gameUserId);
+    boolean deleteGameUser(int gameUserId);
 }
