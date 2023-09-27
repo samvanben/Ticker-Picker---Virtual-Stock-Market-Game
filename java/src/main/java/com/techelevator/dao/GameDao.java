@@ -16,6 +16,6 @@ public interface GameDao {
     Game getGameByGameId(int gameId);
     BigDecimal getAvailableBalanceByUserGame(int userId, int gameId);
     int createGame(Game gameToCreate);
-    boolean updateGame(Game updatedGame, int gameId);
-    boolean deleteGame(int gameId);
+    Game updateGame(Game updatedGame, int gameId);
+    int deleteGame(int gameId);
 }

@@ -1,6 +1,7 @@
 package com.techelevator.dao;
 
 import com.techelevator.exception.DaoException;
+import com.techelevator.model.Game;
 import com.techelevator.model.Stock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
@@ -54,12 +55,34 @@ public class JdbcStockDao implements StockDao {
 
     @Override
     public Stock getStockByStockId(int stockId) {
-        return null;
+        Stock stock = new Stock();
+        String sql = "SELECT * FROM stock WHERE stock_id = ?;";
+        try{
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, stockId);
+            if(results.next()) {
+                stock = mapRowToStock(results);
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return stock;
     }
 
     @Override
     public List<Stock> getStocksByOneUser(int userId) {
-        return null;
+        List<Stock> stocks = new ArrayList<>();
+        String sql = "SELECT * FROM stock WHERE stock_id in "
+                + "(SELECT user_id FROM user join transaction ON transaction.user_id = user.user_id WHERE user_id = ?)";
+        try{
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+            while (results.next()) {
+                Stock stock = mapRowToStock(results);
+                stocks.add(stock);
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return stocks;
     }
 
     @Override
