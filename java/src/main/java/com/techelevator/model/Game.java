@@ -12,13 +12,11 @@ public class Game {
     private int gameId;
     @NotEmpty
     private String nameOfGame;
-    @NotEmpty
     private LocalDate startDate;
     private LocalDate endDate;
     @NotEmpty
     private String ownerName;
     private boolean isRealGame;
-    @NotEmpty
     private boolean currentGame;
     private int daysOfPlaying;
 

@@ -2,6 +2,7 @@ package com.techelevator.dao;
 
 import com.techelevator.exception.DaoException;
 import com.techelevator.model.Game;
+import com.techelevator.model.Stock;
 import com.techelevator.model.User;
 import com.techelevator.model.gameUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,30 @@ public class JdbcGameDao implements GameDao {
     @Autowired
     public JdbcGameDao(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
+    @Override
+    public List<Game> getAllGames() {
+        List<Game> games = new ArrayList<>();
+        String sql = "SELECT * FROM game; ";
+        try{
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+            while(results.next()) {
+                Game game = mapRowToGame(results);
+                games.add(game);
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return games;
+    }
+    @Override
+    public List<User> getPlayersByGameId(int gameId) {
+        return null;
+    }
+    @Override
+    public BigDecimal getAvailableBalanceByUserGame(int userId, int gameId) {
+        return null;
     }
 
     @Override
@@ -77,23 +102,31 @@ public class JdbcGameDao implements GameDao {
 
     @Override
     public int createGame(Game gameToCreate) {
-        int gameId = 0;
-        String sql = "INSERT INTO game (name_of_game, game_start_date, game_end_date, owner_name, is_real_game) VALUES (?, ?, ?, ?, ?) RETURNING game_id";
+        int playerId = 0;
+        String sql = "INSERT INTO game (name_of_game, game_start_date, game_end_date, owner_name) VALUES (?, ?, ?, ?) RETURNING game_id";
+        String addOwnerToGameSql = "INSERT INTO game_user(game_id, user_id) VALUES (?, ?) RETURNING game_user_id; ";
+        String getUserIdSql = "SELECT user_id FROM users WHERE username=? ";
         try{
-            gameId = jdbcTemplate.queryForObject(sql, int.class, gameToCreate.getNameOfGame(), gameToCreate.getStartDate(),
-                    gameToCreate.getEndDate(), gameToCreate.getOwnerName(), gameToCreate.isRealGame());
+            // create a game on database
+            int gameId = jdbcTemplate.queryForObject(sql, int.class, gameToCreate.getNameOfGame(), gameToCreate.getStartDate(),
+                    gameToCreate.getEndDate(), gameToCreate.getOwnerName());
             gameToCreate.setGameId(gameId);
+
+            // get creator userId from database
+            int userId = 0;
+            SqlRowSet results = jdbcTemplate.queryForRowSet(getUserIdSql, gameToCreate.getOwnerName());
+            if(results.next()) {
+                userId = results.getInt("user_id");
+            }
+
+            // add owner to the game
+            playerId = jdbcTemplate.queryForObject(addOwnerToGameSql, int.class, gameId, userId);
         } catch (CannotGetJdbcConnectionException e){
             throw new DaoException( "cannot connect to server or database", e);
         } catch (DataIntegrityViolationException e){
             throw new DaoException("data integrity violation", e);
         }
-        return gameId;
-    }
-
-    @Override
-    public List<Game> getAllGames() {
-        return null;
+        return playerId;
     }
 
     @Override
@@ -213,17 +246,12 @@ public class JdbcGameDao implements GameDao {
     }
 
     @Override
-    public List<User> getPlayersByGameId(int gameId) {
-        return null;
-    }
-
-    @Override
     public Game updateGame(Game updatedGame, int gameId) {
         Game newGame = null;
         boolean success = false;
-        String sql = "UPDATE game SET(name_of_game = ?, game_start_date = ?, game-end_date = ?, owner_name = ?, is_real_game = ?) WHERE game_id = ?;";
+        String sql = "UPDATE game SET(name_of_game = ?, game_start_date = ?, game-end_date = ?, owner_name = ?) WHERE game_id = ?;";
         try{
-            int numberOfRow = jdbcTemplate.update(sql, updatedGame.getNameOfGame(), updatedGame.getStartDate(), updatedGame.getEndDate(), updatedGame.getOwnerName(), updatedGame.isRealGame(), gameId);
+            int numberOfRow = jdbcTemplate.update(sql, updatedGame.getNameOfGame(), updatedGame.getStartDate(), updatedGame.getEndDate(), updatedGame.getOwnerName(), gameId);
             if(numberOfRow == 0){
                 throw new DaoException("No rows affected");
             }else{
@@ -235,11 +263,7 @@ public class JdbcGameDao implements GameDao {
         }catch(DataIntegrityViolationException e){
             throw new DaoException("dtae integrity violation");
         }
-
-
-
         return newGame;
-
     }
 
     @Override
@@ -254,11 +278,6 @@ public class JdbcGameDao implements GameDao {
             throw new DaoException("Data integrity violation", e);
         }
         return numberOfRows;
-    }
-
-    @Override
-    public BigDecimal getAvailableBalanceByUserGame(int userId, int gameId) {
-        return null;
     }
 
     @Override
@@ -286,7 +305,6 @@ public class JdbcGameDao implements GameDao {
         game.setStartDate(results.getDate("game_start_date").toLocalDate());
         game.setEndDate(results.getDate("game_end_date").toLocalDate());
         game.setOwnerName(results.getString("owner_name"));
-        game.setRealGame(results.getBoolean("is_real_game"));
         return game;
     }
 

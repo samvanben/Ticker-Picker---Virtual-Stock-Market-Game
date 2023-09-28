@@ -52,6 +52,7 @@ public class StockController {
         return stockDao.getStockByStockId(stockId);
     }
 
+    // TODO not working due to getStocksByOneUser() method bad sql query
     @RequestMapping(path = "/list-my-stocks", method = RequestMethod.GET)
     public List<Stock> getCurrentLoggedInUserAllStocks(Principal user){
         String username = user.getName();
@@ -90,6 +91,12 @@ public class StockController {
         stockDao.createStock(stock);
         return true;
     }
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @RequestMapping(path = "", method = RequestMethod.POST)
+//    public boolean create(@Valid @RequestBody Stock stock) {
+//        gameDao.createGame()
+//        return true;
+//    }
 
     @RequestMapping(path = "/{stockSymbol}", method = RequestMethod.PUT)
     public boolean update(@Valid @RequestBody Stock stockToUpdate, @PathVariable int stockId) {

@@ -69,6 +69,7 @@ public class JdbcStockDao implements StockDao {
         return stock;
     }
 
+    // TODO not working, bad sql
     @Override
     public List<Stock> getStocksByOneUser(int userId) {
         List<Stock> stocks = new ArrayList<>();
