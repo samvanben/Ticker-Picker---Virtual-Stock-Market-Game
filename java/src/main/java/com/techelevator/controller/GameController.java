@@ -15,7 +15,9 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -35,32 +37,24 @@ public class GameController {
 
     @RequestMapping( method = RequestMethod.GET)
     public List<Game> getAllGamesAsAdmin(){
-
         return gameDao.getAllGames();
     }
 
-    @RequestMapping(path = "/{gameId}", method = RequestMethod.GET)
-    public Game getPlayersByGameId(@PathVariable int gameId){
-        return gameDao.getGameByGameId(gameId);
-    }
-
-    @RequestMapping(path = "/list-my-stocks", method = RequestMethod.GET)
-    public List<Stock> getCurrentLoggedInUserAllStocks(Principal user){
+    @RequestMapping(path = "/my-games", method = RequestMethod.GET)
+    public List<Game> getCurrentLoggedInUserGameList(Principal user){
         String username = user.getName();
         int userId = userDao.findIdByUsername(username);
-        List<Stock> returnList = stockDao.getStocksByOneUser(userId);
+        List<Game> returnList = gameDao.getGamesByUserId(userId);
         return returnList;
     }
 
-    @RequestMapping(path = "/game{gameId}/list-my-stocks", method = RequestMethod.GET)
-    public List<Stock> getCurrentLoggedInUserCertainGameStocks(Principal user, @PathVariable int gameId){
-        String username = user.getName();
-        int userId = userDao.findIdByUsername(username);
-        List<Stock> returnList = stockDao.getStocksByOneUserOfGame(userId, gameId);
-        return returnList;
+    @RequestMapping(path = "/{gameId}/leaderboard", method = RequestMethod.GET)
+    public Map<String, BigDecimal> LeaderboardOfAGame(@PathVariable int gameId){
+        Map<String, BigDecimal> orderedMap = new LinkedHashMap<>();
+        return gameDao.orderGameMembersByTotalBalanceByGameId(gameId);
     }
 
-    @RequestMapping(path = "/game{gameId}/available-balance", method = RequestMethod.GET)
+    @RequestMapping(path = "/{gameId}/available-balance", method = RequestMethod.GET)
     public BigDecimal getCurrentLoggedInUserCertainGameAvailableBalance(Principal user, @PathVariable int gameId){
         String username = user.getName();
         int userId = userDao.findIdByUsername(username);
@@ -68,7 +62,7 @@ public class GameController {
         return availableBalance;
     }
 
-    @RequestMapping(path = "/game{gameId}/total-balance", method = RequestMethod.GET)
+    @RequestMapping(path = "/{gameId}/total-balance", method = RequestMethod.GET)
     public BigDecimal getCurrentLoggedInUserCertainGameTotalBalance(Principal user, @PathVariable int gameId){
         String username = user.getName();
         int userId = userDao.findIdByUsername(username);
@@ -76,25 +70,26 @@ public class GameController {
         return totalBalance;
     }
 
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @RequestMapping(path = "", method = RequestMethod.POST)
-//    public boolean create(@Valid @RequestBody Stock stock) {
-//        return stockDao.createStock(stock);
-//    }
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(path = "", method = RequestMethod.POST)
+    public boolean create(@Valid @RequestBody Game game) {
+        return gameDao.createGame(game)==0 ? false : true;
+    }
 
-    @RequestMapping(path = "/{stockSymbol}", method = RequestMethod.PUT)
-    public boolean update(@Valid @RequestBody Stock stockToUpdate, @PathVariable int stockId) {
-        stockToUpdate.setStockId(stockId);
+    @RequestMapping(path = "/{gameId}", method = RequestMethod.PUT)
+    public boolean update(@Valid @RequestBody Game gameToUpdate, @PathVariable int gameId) {
+        gameToUpdate.setGameId(gameId);
         try {
-            return stockDao.updateStock(stockToUpdate, stockId);
+            gameDao.updateGame(gameToUpdate, gameId);
         } catch (DaoException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Stock Not Found");
         }
+        return true;
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(path = "/{stockSymbol}", method = RequestMethod.DELETE)
-    public boolean delete(@Valid @PathVariable int stockId) {
-        return stockDao.deleteStock(stockId);
+    @RequestMapping(path = "/{gameId}", method = RequestMethod.DELETE)
+    public boolean delete(@Valid @PathVariable int gameId) {
+        return gameDao.deleteGame(gameId)==0 ? false : true;
     }
 }

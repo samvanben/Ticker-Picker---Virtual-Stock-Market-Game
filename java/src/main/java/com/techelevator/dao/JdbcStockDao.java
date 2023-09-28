@@ -68,6 +68,7 @@ public class JdbcStockDao implements StockDao {
         return stock;
     }
 
+    // TODO not working, bad sql
     @Override
     public List<Stock> getStocksByOneUser(int userId) {
         List<Stock> stocks = new ArrayList<>();
@@ -96,7 +97,7 @@ public class JdbcStockDao implements StockDao {
     }
 
     @Override
-    public int createStock(String symbol, String company_name) {
+    public int createStock(Stock stock) {
         return 0;
     }
 

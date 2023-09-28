@@ -40,11 +40,12 @@ public class StockController {
         return stockDao.getAllStocks();
     }
 
-    @RequestMapping(path = "/{stockSymbol}", method = RequestMethod.GET)
-    public Stock getStockBySymbol(@PathVariable String symbol){
-        return stockDao.getStockBySymbol(symbol);
+    @RequestMapping(path = "/{stockId}", method = RequestMethod.GET)
+    public Stock getStockBySymbol(@PathVariable int stockId){
+        return stockDao.getStockByStockId(stockId);
     }
 
+    // TODO not working due to getStocksByOneUser() method bad sql query
     @RequestMapping(path = "/list-my-stocks", method = RequestMethod.GET)
     public List<Stock> getCurrentLoggedInUserAllStocks(Principal user){
         String username = user.getName();
@@ -59,22 +60,6 @@ public class StockController {
         int userId = userDao.findIdByUsername(username);
         List<Stock> returnList = stockDao.getStocksByOneUserOfGame(userId, gameId);
         return returnList;
-    }
-
-    @RequestMapping(path = "/{gameId}/available-balance", method = RequestMethod.GET)
-    public BigDecimal getCurrentLoggedInUserCertainGameAvailableBalance(Principal user, @PathVariable int gameId){
-        String username = user.getName();
-        int userId = userDao.findIdByUsername(username);
-        BigDecimal availableBalance = gameDao.getGameUserAvailableBalance(gameId, userId);
-        return availableBalance;
-    }
-
-    @RequestMapping(path = "/{gameId}/total-balance", method = RequestMethod.GET)
-    public BigDecimal getCurrentLoggedInUserCertainGameTotalBalance(Principal user, @PathVariable int gameId){
-        String username = user.getName();
-        int userId = userDao.findIdByUsername(username);
-        BigDecimal totalBalance = gameDao.getGameUserTotalBalance(gameId, userId);
-        return totalBalance;
     }
 
 //    @ResponseStatus(HttpStatus.CREATED)

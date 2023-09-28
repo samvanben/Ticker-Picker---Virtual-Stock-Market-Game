@@ -26,10 +26,10 @@ CREATE TABLE stock (
 CREATE TABLE game (
 	game_id SERIAL,
 	name_of_game varchar (50) NOT NULL,
-    game_start_date date NOT NULL,
+    game_start_date date default CURRENT_DATE,
     game_end_date date NOT NULL,
     owner_name varchar(50) NOT NULL,
-    is_real_game boolean default true,
+    is_current_game boolean default true,
 	CONSTRAINT PK_game PRIMARY KEY (game_id),
 	CONSTRAINT FK_game_owner FOREIGN KEY (owner_name) REFERENCES users (username)
 );

@@ -12,7 +12,7 @@ public interface StockDao {
     List<Stock> getStocksByOneUser(int userId);
     List<Stock> getStocksByAllUsersOfGame(int gameId);
     List<Stock> getStocksByOneUserOfGame(int userId, int gameId);
-    int createStock(String symbol, String company_name);
+    int createStock(Stock stock);
     boolean updateStock(Stock updatedStock, int stockId);
     boolean deleteStock(int stockId);
 }
