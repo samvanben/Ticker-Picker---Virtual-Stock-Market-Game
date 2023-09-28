@@ -2,6 +2,7 @@ package com.techelevator.controller;
 
 import javax.validation.Valid;
 
+import com.techelevator.exception.DaoException;
 import com.techelevator.model.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -58,6 +59,22 @@ public class AuthenticationController {
         } catch (UsernameNotFoundException e) {
             userDao.create(newUser.getUsername().toLowerCase(),newUser.getPassword(), newUser.getRole());
         }
+    }
+
+    @RequestMapping(path = "account/{userId}", method = RequestMethod.PUT)
+    public boolean update(@Valid @RequestBody User userToUpdate, @PathVariable int userId) {
+        userToUpdate.setId(userId);
+        try {
+            return userDao.updateUser(userToUpdate, userId);
+        } catch (DaoException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found");
+        }
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(path = "account/{userId}", method = RequestMethod.DELETE)
+    public boolean delete(@Valid @PathVariable int userId) {
+        return userDao.deleteUser(userId);
     }
 
 }

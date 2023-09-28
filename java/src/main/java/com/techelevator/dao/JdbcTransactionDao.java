@@ -112,7 +112,7 @@ public class JdbcTransactionDao implements TransactionDao {
     @Override
     public int createTransaction(Transaction transactionToCreate) {
         int transactionId = 0;
-        String sql = "INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES (?, ?, ?, ?, ?, ?); ";
+        String sql = "INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES (?, ?, ?, ?, ?, ?) returning ; ";
         try {
             transactionId = jdbcTemplate.queryForObject(sql, int.class, transactionToCreate.getTransactionType(), transactionToCreate.getPrice(), transactionToCreate.getNumberOfShares(),
                     transactionToCreate.getUserId(), transactionToCreate.getStockId(), transactionToCreate.getGameId());

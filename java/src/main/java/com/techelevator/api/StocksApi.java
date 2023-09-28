@@ -4,7 +4,7 @@ import com.techelevator.model.Stock;
 import com.techelevator.model.StockApiDTO;
 import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
-import org.json.JSONArray;
+//import org.json.JSONArray;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,7 +19,7 @@ import java.util.Scanner;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.json.JSONObject;
+//import org.json.JSONObject;
 
 @Component
 public class StocksApi{

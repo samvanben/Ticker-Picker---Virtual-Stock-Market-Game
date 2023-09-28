@@ -13,10 +13,8 @@ INSERT INTO game (name_of_game, game_start_date, game_end_date, owner_name) VALU
 
 INSERT INTO game_user (game_id, user_id) VALUES ('1','1');
 INSERT INTO game_user (game_id, user_id) VALUES ('1','4');
-INSERT INTO game_user (game_id, user_id) VALUES ('1','5');
 INSERT INTO game_user (game_id, user_id) VALUES ('2','1');
 INSERT INTO game_user (game_id, user_id) VALUES ('2','3');
-INSERT INTO game_user (game_id, user_id) VALUES ('2','4');
 INSERT INTO game_user (game_id, user_id) VALUES ('2','5');
 INSERT INTO game_user (game_id, user_id) VALUES ('2','6');
 

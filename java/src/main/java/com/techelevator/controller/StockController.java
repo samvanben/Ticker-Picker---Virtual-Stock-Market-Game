@@ -5,6 +5,7 @@ import com.techelevator.dao.StockDao;
 import com.techelevator.dao.UserDao;
 import com.techelevator.exception.DaoException;
 import com.techelevator.model.Stock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -105,12 +106,16 @@ public class StockController {
     public boolean delete(@Valid @PathVariable int stockId) {
         return stockDao.deleteStock(stockId);
     }
-
     private StocksApi stocksApi = new StocksApi();
 
     @GetMapping(path = "/stocks")
     public StockApiDTO getStocks(){
         return stocksApi.stockData();
     }
+
+//    @GetMapping(path = "/stocks")
+//    public StockApiDTO getStocks(){
+//        return stocksApi.stockData();
+//    }
 
 }
