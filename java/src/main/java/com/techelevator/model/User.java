@@ -2,21 +2,29 @@ package com.techelevator.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import javax.validation.constraints.NotEmpty;
+import java.math.BigDecimal;
+import java.util.*;
 
 public class User {
-
    private int id;
    private String username;
    @JsonIgnore
    private String password;
    @JsonIgnore
    private boolean activated;
+   @NotEmpty
+   private String role;
+   private String firstName;
+   private String lastName;
    private Set<Authority> authorities = new HashSet<>();
+   private List<Stock> listOfOwnedStocks;
+   private List<Game> listOfGames;
+   private List<Transaction> listOfTransaction = new ArrayList<>();
+   private BigDecimal profileBalance;
 
-   public User() { }
+   public User() {
+   }
 
    public User(int id, String username, String password, String authorities) {
       this.id = id;
@@ -24,6 +32,9 @@ public class User {
       this.password = password;
       if(authorities != null) this.setAuthorities(authorities);
       this.activated = true;
+      this.listOfOwnedStocks = new ArrayList<>();
+      this.listOfGames = new ArrayList<>();
+      this.profileBalance = new BigDecimal(0);
    }
 
    public int getId() {
@@ -50,6 +61,14 @@ public class User {
       this.password = password;
    }
 
+   public String getRole() {
+      return role;
+   }
+
+   public void setRole(String role) {
+      this.role = role;
+   }
+
    public boolean isActivated() {
       return activated;
    }
@@ -64,6 +83,74 @@ public class User {
 
    public void setAuthorities(Set<Authority> authorities) {
       this.authorities = authorities;
+   }
+
+   public String getFirstName() {
+      return firstName;
+   }
+
+   public void setFirstName(String firstName) {
+      this.firstName = firstName;
+   }
+
+   public String getLastName() {
+      return lastName;
+   }
+
+   public void setLastName(String lastName) {
+      this.lastName = lastName;
+   }
+
+   public List<Stock> getListOfOwnedStocks() {
+      return listOfOwnedStocks;
+   }
+
+   public void setListOfOwnedStocks(List<Stock> listOfOwnedStocks) {
+      this.listOfOwnedStocks = listOfOwnedStocks;
+   }
+
+   public void addOwnedStocks(Stock stock) {
+      this.listOfOwnedStocks.add(stock);
+   }
+
+   public List<Game> getListOfGames() {
+      return listOfGames;
+   }
+
+   public void setListOfGames(List<Game> listOfGames) {
+      this.listOfGames = listOfGames;
+   }
+
+   public void addOwnedGames(Game game) {
+      this.listOfGames.add(game);
+   }
+
+   public List<Transaction> getListOfTransaction() {
+      return listOfTransaction;
+   }
+
+   public void setListOfTransaction(List<Transaction> listOfTransaction) {
+      this.listOfTransaction = listOfTransaction;
+   }
+
+   public void addToListOfTransaction(Transaction transaction) {
+      this.listOfTransaction.add(transaction);
+   }
+
+   public BigDecimal getProfileBalance() {
+      return profileBalance;
+   }
+
+   public void setProfileBalance(BigDecimal profileBalance) {
+      this.profileBalance = profileBalance;
+   }
+
+   public void addToProfileBalance(BigDecimal balance) {
+      this.profileBalance = this.profileBalance.add(balance);
+   }
+
+   public void subtractFromProfileBalance(BigDecimal balance) {
+      this.profileBalance = this.profileBalance.subtract(balance);
    }
 
    public void setAuthorities(String authorities) {
