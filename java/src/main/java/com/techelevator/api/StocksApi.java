@@ -2,6 +2,7 @@ package com.techelevator.api;
 
 import com.techelevator.model.Stock;
 import com.techelevator.model.StockApiDTO;
+import com.techelevator.model.StockListDTO;
 import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
 //import org.json.JSONArray;
@@ -84,7 +85,15 @@ public class StocksApi{
 //    }
 
     public StockApiDTO stockData(){
-        return restTemplate.getForObject(API_BASE_URL + "?symbol=TSLA" + "&dp=2&" + API_KEY, StockApiDTO.class);
+        return restTemplate.getForObject(API_BASE_URL + "?symbol=AAPL&dp=2&" + API_KEY, StockApiDTO.class);
+    }
+
+    public StockApiDTO stockDataSymbol(String symbol){
+        return restTemplate.getForObject(API_BASE_URL + "?symbol=" + symbol.toUpperCase() + "&dp=2&" + API_KEY, StockApiDTO.class);
+    }
+
+    public StockListDTO stockList(){
+        return restTemplate.getForObject(API_BASE_URL + "?symbol=AAPL,TSLA,GOOGL,JPM,MFST&dp=2" + API_KEY, StockListDTO.class);
     }
 
 }
