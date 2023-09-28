@@ -6,6 +6,7 @@ import com.techelevator.dao.UserDao;
 import com.techelevator.exception.DaoException;
 import com.techelevator.model.Game;
 import com.techelevator.model.Stock;
+import com.techelevator.model.gameUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -32,14 +33,15 @@ public class GameController {
         this.stockDao = stockDao;
     }
 
-    @RequestMapping(path = "", method = RequestMethod.GET)
+    @RequestMapping( method = RequestMethod.GET)
     public List<Game> getAllGamesAsAdmin(){
+
         return gameDao.getAllGames();
     }
 
     @RequestMapping(path = "/{gameId}", method = RequestMethod.GET)
-    public Stock getGameUsersByGameId(@PathVariable String symbol){
-        return stockDao.getStockBySymbol(symbol);
+    public gameUser getPlayersByGameId(@PathVariable int gameId){
+        return gameDao.get(gameId);
     }
 
     @RequestMapping(path = "/list-my-stocks", method = RequestMethod.GET)
