@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import Logout from '../views/Logout.vue'
 import Register from '../views/Register.vue'
 import store from '../store/index'
+import NotFound from "../views/NotFound.vue"
 
 
 Vue.use(Router)
@@ -53,6 +54,29 @@ const router = new Router({
       meta: {
         requiresAuth: false
       }
+    },
+    {
+      // temporary, goes to 404 page
+      path: "/lobby",
+      name: "lobby",
+      component: NotFound,
+    },
+    {
+      // temporary, goes to 404 page
+      path: "/leaderboard",
+      name: "leaderboard",
+      component: NotFound,
+    },
+    {
+      // temporary, goes to 404 page
+      path: "/news",
+      name: "news",
+      component: NotFound,
+    },
+    {
+      path:'/:pathMatch(.*)*',
+      name:'NotFound',
+      component:NotFound
     }
   ]
 })

@@ -4,9 +4,9 @@
       <img id="icon-header" src="..\src\assets\icon header.png" alt="icon">
       <div id="links">
         <router-link v-bind:to="{ name: 'home' }" v-if="$store.state.token != ''">Home</router-link>&nbsp;&nbsp;&nbsp;
-        <p id="lobby-tag" v-if="$store.state.token != ''">Lobby</p>&nbsp;&nbsp;&nbsp;
-        <p id="leaderboard-tag" v-if="$store.state.token != ''">Leaderboard</p>&nbsp;&nbsp;&nbsp;
-        <p id="news-tag" v-if="$store.state.token != ''">Latest News</p>&nbsp;&nbsp;&nbsp;
+        <router-link id="lobby-tag" v-bind:to="{name: 'lobby'}" v-if="$store.state.token != ''">Lobby</router-link>&nbsp;&nbsp;&nbsp;
+        <router-link id="leaderboard-tag" v-bind:to="{name: 'leaderboard'}" v-if="$store.state.token != ''">Leaderboard</router-link>&nbsp;&nbsp;&nbsp;
+        <router-link id="news-tag" v-bind:to="{name: 'news'}" v-if="$store.state.token != ''">Latest News</router-link>&nbsp;&nbsp;&nbsp;
         <router-link v-bind:to="{ name: 'logout' }" v-if="$store.state.token != ''">Logout</router-link>
         <input type="search" placeholder="  Search for a stock..." v-if="$store.state.token != ''">
       </div>
