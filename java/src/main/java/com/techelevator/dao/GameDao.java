@@ -19,7 +19,7 @@ public interface GameDao {
     boolean addToFromGameUserTotalBalance(double amount, int gameId, int userId);
     boolean addPlayerToGame(List<User> users, int gameId);
     List<User> getPlayersByGameId(int gameId);
-    Map<String, BigDecimal> getOrderedPlayersByGameId(int gameId);
+    Map<String, BigDecimal> orderGameMembersByTotalBalanceByGameId(int gameId);
     List<Game> getGamesByUserId(int userId);
     Game getGameByGameId(int gameId);
     BigDecimal getAvailableBalanceByUserGame(int userId, int gameId);

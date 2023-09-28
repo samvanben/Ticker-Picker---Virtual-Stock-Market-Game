@@ -43,14 +43,14 @@ public class TransactionController {
         return transactionDao.getTransactionsByUserId(userId);
     }
 
-    @RequestMapping(path = "/{gameId}", method = RequestMethod.GET)
+    @RequestMapping(path = "/game{gameId}", method = RequestMethod.GET)
     public List<Transaction> listTransactionsOfCurrentUserByGameId(@PathVariable int gameId, Principal user){
         String username = user.getName();
         int userId = userDao.findIdByUsername(username);
         return transactionDao.getTransactionsByUserGame(userId, gameId);
     }
 
-    @RequestMapping(path = "/{gameId}/{stockId}", method = RequestMethod.GET)
+    @RequestMapping(path = "/game{gameId}/stock{stockId}", method = RequestMethod.GET)
     public List<Transaction> listTransactionsOfCurrentUserByGameIdAndStockId(@PathVariable int gameId, @PathVariable int stockId, Principal user){
         String username = user.getName();
         int userId = userDao.findIdByUsername(username);
@@ -60,8 +60,7 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(path = "", method = RequestMethod.POST)
     public boolean createNewTransaction(@Valid @RequestBody Transaction transaction) {
-        transactionDao.createTransaction(transaction);
-        return true;
+        return transactionDao.createTransaction(transaction)==0 ? false : true;
     }
 
     @RequestMapping(path = "/{transactionId}", method = RequestMethod.PUT)

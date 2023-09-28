@@ -3,6 +3,7 @@ package com.techelevator.dao;
 import com.techelevator.exception.DaoException;
 import com.techelevator.model.Game;
 import com.techelevator.model.User;
+import com.techelevator.model.gameUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -26,24 +27,7 @@ public class JdbcGameDao implements GameDao {
     }
 
     @Override
-    public List<User> getPlayersByGameId(int gameId) {
-        List<User> players = new ArrayList<>();
-        String sql = "SELECT * FROM users WHERE user_id in "
-                + "(SELECT user_id FROM game_user WHERE game_id = ?)";
-        try{
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, gameId);
-            while (results.next()) {
-                User user = mapRowToUser(results);
-                players.add(user);
-            }
-        } catch (CannotGetJdbcConnectionException e){
-            throw new DaoException( "cannot connect to server or database", e);
-        }
-        return players;
-    }
-
-    @Override
-    public Map<String, BigDecimal> getOrderedPlayersByGameId(int gameId) {
+    public Map<String, BigDecimal> orderGameMembersByTotalBalanceByGameId(int gameId) {
         Map<String, BigDecimal> orderedMap = new LinkedHashMap<>();
         String sql = "SELECT total_balance, username FROM game_user JOIN users ON users.user_id=game_user.user_id WHERE game_id = ? ORDER BY total_balance desc; ";
         try{
@@ -226,6 +210,11 @@ public class JdbcGameDao implements GameDao {
             }
         }
         return success;
+    }
+
+    @Override
+    public List<User> getPlayersByGameId(int gameId) {
+        return null;
     }
 
     @Override

@@ -40,8 +40,8 @@ public class GameController {
     }
 
     @RequestMapping(path = "/{gameId}", method = RequestMethod.GET)
-    public gameUser getPlayersByGameId(@PathVariable int gameId){
-        return gameDao.get(gameId);
+    public Game getPlayersByGameId(@PathVariable int gameId){
+        return gameDao.getGameByGameId(gameId);
     }
 
     @RequestMapping(path = "/list-my-stocks", method = RequestMethod.GET)

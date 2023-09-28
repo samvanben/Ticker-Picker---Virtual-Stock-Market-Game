@@ -1,11 +1,11 @@
 package com.techelevator.controller;
-
-<<<<<<< HEAD
+import com.techelevator.api.StocksApi;
 import com.techelevator.dao.GameDao;
 import com.techelevator.dao.StockDao;
 import com.techelevator.dao.UserDao;
 import com.techelevator.exception.DaoException;
 import com.techelevator.model.Stock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -24,16 +24,6 @@ import java.util.Map;
 @RestController
 //@PreAuthorize("isAuthenticated()")
 @RequestMapping(path = "/api/stocks")
-=======
-import com.techelevator.api.StocksApi;
-import com.techelevator.model.StockApiDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
->>>>>>> main
 public class StockController {
     private StockDao stockDao;
     private UserDao userDao;
@@ -104,21 +94,17 @@ public class StockController {
         }
     }
 
-<<<<<<< HEAD
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(path = "/{stockSymbol}", method = RequestMethod.DELETE)
     public boolean delete(@Valid @PathVariable int stockId) {
         return stockDao.deleteStock(stockId);
     }
-=======
     @Autowired
     private StocksApi stocksApi;
 
-    @GetMapping(path = "/stocks")
-    public StockApiDTO getStocks(){
-        return stocksApi.stockData();
-    }
+//    @GetMapping(path = "/stocks")
+//    public StockApiDTO getStocks(){
+//        return stocksApi.stockData();
+//    }
 
-
->>>>>>> main
 }
