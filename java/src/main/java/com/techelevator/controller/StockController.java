@@ -5,6 +5,7 @@ import com.techelevator.dao.StockDao;
 import com.techelevator.dao.UserDao;
 import com.techelevator.exception.DaoException;
 import com.techelevator.model.Stock;
+import com.techelevator.model.StockListDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,15 +43,15 @@ public class StockController {
         this.gameDao = gameDao;
     }
 
-    @RequestMapping(path = "", method = RequestMethod.GET)
+    @RequestMapping(path = "/stocks", method = RequestMethod.GET)
     public List<Stock> listAllStocks(){
         return stockDao.getAllStocks();
     }
 
-    @RequestMapping(path = "/{stockId}", method = RequestMethod.GET)
-    public Stock getStockBySymbol(@PathVariable int stockId){
-        return stockDao.getStockByStockId(stockId);
-    }
+//    @RequestMapping(path = "/{stockId}", method = RequestMethod.GET)
+//    public Stock getStockBySymbol(@PathVariable int stockId){
+//        return stockDao.getStockByStockId(stockId);
+//    }
 
     // TODO not working due to getStocksByOneUser() method bad sql query
     @RequestMapping(path = "/list-my-stocks", method = RequestMethod.GET)
@@ -115,14 +116,19 @@ public class StockController {
     }
     private StocksApi stocksApi = new StocksApi();
 
-    @GetMapping(path = "/stocks")
+    @GetMapping(path = "/{symbol}")
+    public StockApiDTO getStocks(@PathVariable String symbol){
+        return stocksApi.stockDataSymbol(symbol);
+    }
+
+    @GetMapping(path = "/stock_list")
+    public StockListDTO getStockList(){
+        return stocksApi.stockList();
+    }
+
+    @GetMapping(path = "/trendy_stock")
     public StockApiDTO getStocks(){
         return stocksApi.stockData();
     }
-
-//    @GetMapping(path = "/stocks")
-//    public StockApiDTO getStocks(){
-//        return stocksApi.stockData();
-//    }
 
 }
