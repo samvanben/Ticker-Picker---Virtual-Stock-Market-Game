@@ -58,8 +58,8 @@ public class StockController {
     public List<Stock> getCurrentLoggedInUserAllStocks(Principal user){
         String username = user.getName();
         int userId = userDao.findIdByUsername(username);
-        List<Stock> returnList = stockDao.getStocksByOneUser(userId);
-        return returnList;
+
+        return stockDao.getStocksByOneUser(userId);
     }
 
     @RequestMapping(path = "/{gameId}/list-my-stocks", method = RequestMethod.GET)

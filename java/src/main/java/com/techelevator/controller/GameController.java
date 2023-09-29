@@ -1,12 +1,12 @@
 package com.techelevator.controller;
 
 import com.techelevator.dao.GameDao;
+import com.techelevator.dao.GameUserDao;
 import com.techelevator.dao.StockDao;
 import com.techelevator.dao.UserDao;
 import com.techelevator.exception.DaoException;
 import com.techelevator.model.Game;
-import com.techelevator.model.Stock;
-import com.techelevator.model.gameUser;
+import com.techelevator.model.GameUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,12 +28,14 @@ import java.util.Map;
 public class GameController {
     private UserDao userDao;
     private GameDao gameDao;
+    private GameUserDao gameUserDao;
     private StockDao stockDao;
 
-    public GameController(UserDao userDao, GameDao gameDao, StockDao stockDao) {
+    public GameController(UserDao userDao, GameDao gameDao, StockDao stockDao, GameUserDao gameUserDao) {
         this.userDao = userDao;
         this.gameDao = gameDao;
         this.stockDao = stockDao;
+        this.gameUserDao = gameUserDao;
     }
 
     @RequestMapping( method = RequestMethod.GET)
@@ -46,6 +49,17 @@ public class GameController {
         int userId = userDao.findIdByUsername(username);
         List<Game> returnList = gameDao.getGamesByUserId(userId);
         return returnList;
+    }
+
+    @RequestMapping(path = "/{gameId}/players", method = RequestMethod.GET)
+    public List<GameUser> getCertainGamePlayers(@PathVariable int gameId){
+        return gameUserDao.getPlayerByGameId(gameId);
+    }
+
+    @RequestMapping(path = "/{gameId}/add-player", method = RequestMethod.GET)
+    public Map<String, Integer> listPlayersForAdding(@PathVariable int gameId){
+        Map<String, Integer> players = gameDao.getListOfPlayersAvailableToBeAdd(gameId);
+        return players;
     }
 
     @RequestMapping(path = "/{gameId}/leaderboard", method = RequestMethod.GET)
@@ -68,6 +82,25 @@ public class GameController {
         int userId = userDao.findIdByUsername(username);
         BigDecimal totalBalance = gameDao.getGameUserTotalBalance(gameId, userId);
         return totalBalance;
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(path = "/add-player", method = RequestMethod.POST)
+    public boolean addUserToGame(@Valid @RequestBody GameUser gameUser) {
+
+        // get players of current game, make sure the user to be added is not already in the game
+        boolean exist = false;
+        List<GameUser> currentGamePlayer = gameUserDao.getPlayerByGameId(gameUser.getGameId());
+        for(GameUser player: currentGamePlayer){
+            if(player.getUserId()==gameUser.getUserId()){
+                exist = true;
+            }
+        }
+        if(!exist){
+            return gameUserDao.createGameUser(gameUser)==0 ? false : true;
+        } else {
+            throw new DaoException("Player already in this game!");
+        }
     }
 
     @ResponseStatus(HttpStatus.CREATED)
