@@ -115,6 +115,14 @@ public class StockController {
         return stockDao.deleteStock(stockId);
     }
     private StocksApi stocksApi = new StocksApi();
+<<<<<<< HEAD
+=======
+
+    @GetMapping(path = "/stocks")
+    public StockApiDTO getStocks(){
+        return stocksApi.stockData();
+    }
+>>>>>>> ellie
 
     @GetMapping(path = "/{symbol}")
     public StockApiDTO getStocks(@PathVariable String symbol){
