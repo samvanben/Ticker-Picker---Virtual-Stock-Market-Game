@@ -51,6 +51,11 @@ public class GameController {
         return returnList;
     }
 
+    @RequestMapping(path = "/{gameId}/players", method = RequestMethod.GET)
+    public List<GameUser> getCertainGamePlayers(@PathVariable int gameId){
+        return gameUserDao.getPlayerByGameId(gameId);
+    }
+
     @RequestMapping(path = "/{gameId}/add-player", method = RequestMethod.GET)
     public Map<String, Integer> listPlayersForAdding(@PathVariable int gameId){
         Map<String, Integer> players = gameDao.getListOfPlayersAvailableToBeAdd(gameId);
