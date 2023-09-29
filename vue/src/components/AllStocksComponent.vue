@@ -20,7 +20,6 @@ export default {
             stocks: []
         }
     },
-    // We want to load puppies as soon as someone visits the page
     created(){
         stockService.getStocks()
             .then(response => this.stocks = response.data)
