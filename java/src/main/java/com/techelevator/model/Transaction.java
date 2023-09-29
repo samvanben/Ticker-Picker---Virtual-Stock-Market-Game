@@ -5,26 +5,24 @@ import java.math.BigDecimal;
 
 public class Transaction {
     private int transactionId;
-    @NotEmpty
+    @NotEmpty(message = "Please enter stock")
     private int stockId;
-    @NotEmpty
+    @NotEmpty(message = "Please enter game")
     private int gameId;
-    @NotEmpty
+    @NotEmpty(message = "Please enter user")
     private int userId;
-    @NotEmpty
+    @NotEmpty(message = "Please enter price")
     private BigDecimal price;
-    @NotEmpty
+    @NotEmpty(message = "Please enter transaction type")
     private String transactionType;
-    @NotEmpty
+    @NotEmpty(message = "Please enter number of shares for execution")
     private int numberOfShares;
-    private BigDecimal totalBalance;
-    private BigDecimal availableBalance;
 
     public Transaction() {
 
     }
 
-    public Transaction(int transactionId, int stockId, int gameId, int userId, BigDecimal price, String transactionType, int numberOfShares, BigDecimal totalBalance, BigDecimal availableBalance) {
+    public Transaction(int transactionId, int stockId, int gameId, int userId, BigDecimal price, String transactionType, int numberOfShares) {
         this.transactionId = transactionId;
         this.stockId = stockId;
         this.gameId = gameId;
@@ -32,19 +30,15 @@ public class Transaction {
         this.price = price;
         this.transactionType = transactionType;
         this.numberOfShares = numberOfShares;
-        this.totalBalance = totalBalance;
-        this.availableBalance = availableBalance;
     }
 
-    public Transaction(int stockId, int gameId, int userId, BigDecimal price, String transactionType, int numberOfShares, BigDecimal totalBalance, BigDecimal availableBalance) {
+    public Transaction(int stockId, int gameId, int userId, BigDecimal price, String transactionType, int numberOfShares) {
         this.stockId = stockId;
         this.gameId = gameId;
         this.userId = userId;
         this.price = price;
         this.transactionType = transactionType;
         this.numberOfShares = numberOfShares;
-        this.totalBalance = totalBalance;
-        this.availableBalance = availableBalance;
     }
 
     public int getTransactionId() {
@@ -103,20 +97,16 @@ public class Transaction {
         this.numberOfShares = numberOfShares;
     }
 
-    public BigDecimal getTotalBalance() {
-        return totalBalance;
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "transactionId=" + transactionId +
+                ", stockId=" + stockId +
+                ", gameId=" + gameId +
+                ", userId=" + userId +
+                ", price=" + price +
+                ", transactionType='" + transactionType + '\'' +
+                ", numberOfShares=" + numberOfShares +
+                '}';
     }
-
-    public void setTotalBalance(BigDecimal totalBalance) {
-        this.totalBalance = totalBalance;
-    }
-
-    public BigDecimal getAvailableBalance() {
-        return availableBalance;
-    }
-
-    public void setAvailableBalance(BigDecimal availableBalance) {
-        this.availableBalance = availableBalance;
-    }
-
 }

@@ -5,7 +5,7 @@ INSERT INTO users (username,password_hash,role) VALUES ('user','$2a$08$UkVvwpULi
 
 INSERT INTO users(username, password_hash, first_name, last_name, role) VALUES ('brian', '$2a$10$nP3XiNhuj1EzpJOv.wDrZOml9zV6eh8HLcLvwr/SPmxr9l7Fr6a1u', 'Brian', 'Engler', 'ROLE_ADMIN');
 INSERT INTO users(username, password_hash, first_name, last_name, role) VALUES ('hagen', '$2a$10$K2VTobYUZldGdrgbiyvEJOdaUyUhUjPMivimAOdkkzkbVN.ARjsdy', 'Hagen', 'White', 'ROLE_ADMIN');
-INSERT INTO users(username, password_hash, first_name, last_name, role) VALUES ('ellie', '123456', 'Ellie', 'Lin', 'ROLE_ADMIN');
+INSERT INTO users(username, password_hash, first_name, last_name, role) VALUES ('ellie', '$2a$10$K2VTobYUZldGdrgbiyvEJOdaUyUhUjPMivimAOdkkzkbVN.ARjsdy', 'Ellie', 'Lin', 'ROLE_ADMIN');
 INSERT INTO users(username, password_hash, first_name, last_name, role) VALUES ('sam', '$2a$10$DS0l9zbQkTEmVB7xrDxxdeptgRaDyQk/i9EVQanPKpukbHi08aaam', 'Sam', 'VanBennekom', 'ROLE_ADMIN');
 
 INSERT INTO game (name_of_game, game_start_date, game_end_date, owner_name) VALUES ('test game 1', '2023-09-25', '2023-10-25','ellie');

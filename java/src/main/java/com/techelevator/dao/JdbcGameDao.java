@@ -2,21 +2,17 @@ package com.techelevator.dao;
 
 import com.techelevator.exception.DaoException;
 import com.techelevator.model.Game;
-import com.techelevator.model.Stock;
+import com.techelevator.model.GameUser;
 import com.techelevator.model.User;
-import com.techelevator.model.gameUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.*;
 
 @Component
@@ -42,13 +38,54 @@ public class JdbcGameDao implements GameDao {
         }
         return games;
     }
+
     @Override
-    public List<User> getPlayersByGameId(int gameId) {
-        return null;
+    public Map<String, Integer> getListOfPlayersAvailableToBeAdd(int gameId) {
+        Map<String, Integer> players = new HashMap<>();
+        String sql = "SELECT * FROM users WHERE user_id NOT IN (SELECT user_id FROM game_user WHERE game_id=?); ";
+        try{
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, gameId);
+            while(results.next()) {
+                String username = results.getString("username");
+                int userId = results.getInt("user_id");
+                players.put(username, userId);
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return players;
+    }
+
+    @Override
+    public List<GameUser> getPlayersByGameId(int gameId) {
+        List<GameUser> players = new ArrayList<>();
+        String sql = "SELECT * FROM game_user WHERE game_id = ? ";
+        try{
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+            while(results.next()) {
+                GameUser gameUser = mapRowToGameUser(results);
+                players.add(gameUser);
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return players;
     }
     @Override
     public BigDecimal getAvailableBalanceByUserGame(int userId, int gameId) {
-        return null;
+        BigDecimal bigDecimal = new BigDecimal(0);
+        String sql = "SELECT available_balance FROM game_user WHERE user_id = ? AND game_id = ?; ";
+        try{
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId, gameId);
+            if(results.next()) {
+                bigDecimal = results.getBigDecimal("available_balance");
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        } catch (DataIntegrityViolationException e){
+            throw new DaoException("data integrity violation", e);
+        }
+        return bigDecimal;
     }
 
     @Override
@@ -103,13 +140,18 @@ public class JdbcGameDao implements GameDao {
     @Override
     public int createGame(Game gameToCreate) {
         int playerId = 0;
+
         String sql = "INSERT INTO game (name_of_game, game_start_date, game_end_date, owner_name) VALUES (?, ?, ?, ?) RETURNING game_id;";
+
         String addOwnerToGameSql = "INSERT INTO game_user(game_id, user_id) VALUES (?, ?) RETURNING game_user_id; ";
         String getUserIdSql = "SELECT user_id FROM users WHERE username=? ;";
         try{
             // create a game on database
+
             int gameId = jdbcTemplate.queryForObject(sql, int.class, gameToCreate.getNameOfGame(), gameToCreate.getStartDate(),
                     gameToCreate.getEndDate(), gameToCreate.getOwnerName(), gameToCreate.getGameId());
+
+
             gameToCreate.setGameId(gameId);
 
             // get creator userId from database
@@ -154,7 +196,7 @@ public class JdbcGameDao implements GameDao {
     }
 
     @Override
-    public boolean subtractFromGameUserAvailableBalance(double amount, int gameId, int userId) {
+    public boolean subtractFromGameUserAvailableBalance(BigDecimal amount, int gameId, int userId) {
         boolean success = false;
         String sql = "UPDATE game_user SET available_balance = available_balance - ? WHERE game_id=? AND user_id=?; ";
         try {
@@ -172,7 +214,7 @@ public class JdbcGameDao implements GameDao {
     }
 
     @Override
-    public boolean addToGameUserAvailableBalance(double amount, int gameId, int userId) {
+    public boolean addToGameUserAvailableBalance(BigDecimal amount, int gameId, int userId) {
         boolean success = false;
         String sql = "UPDATE game_user SET available_balance = available_balance + ? WHERE game_id=? AND user_id=?; ";
         try {
@@ -302,8 +344,13 @@ public class JdbcGameDao implements GameDao {
         Game game = new Game();
         game.setGameId((results.getInt("game_id")));
         game.setNameOfGame(results.getString("name_of_game"));
-        game.setStartDate(results.getDate("game_start_date").toLocalDate());
-        game.setEndDate(results.getDate("game_end_date").toLocalDate());
+
+        if (results.getDate("game_start_date") != null) {
+            game.setStartDate(results.getDate("game_start_date").toLocalDate());
+        }
+        if (results.getDate("game_end_date") != null) {
+            game.setEndDate(results.getDate("game_end_date").toLocalDate());
+        }
         game.setOwnerName(results.getString("owner_name"));
         return game;
     }
@@ -314,5 +361,15 @@ public class JdbcGameDao implements GameDao {
         user.setUsername(results.getString("username"));
         user.setPassword(results.getString("password_hash"));
         return user;
+    }
+
+    private GameUser mapRowToGameUser(SqlRowSet results) {
+        GameUser gameUser = new GameUser();
+        gameUser.setGameUserId((results.getInt("game_user_id")));
+        gameUser.setGameId((results.getInt("game_id")));
+        gameUser.setUserId((results.getInt("user_id")));
+        gameUser.setAvailableBalance((results.getBigDecimal("available_balance")));
+        gameUser.setTotalBalance((results.getBigDecimal("total_balance")));
+        return gameUser;
     }
 }

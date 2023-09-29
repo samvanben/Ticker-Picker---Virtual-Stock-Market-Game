@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 
 public class Stock {
     private int stockId;
-    @NotEmpty
+    @NotEmpty(message = "Please enter symbol for stock")
     private String symbol;
     private BigDecimal askPrice;
     private BigDecimal bidPrice;
