@@ -1,5 +1,5 @@
 package com.techelevator.controller;
-import com.techelevator.api.StocksApi;
+
 import com.techelevator.dao.GameDao;
 import com.techelevator.dao.StockDao;
 import com.techelevator.dao.UserDao;
@@ -19,6 +19,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.techelevator.api.StocksApi;
+import com.techelevator.model.StockApiDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Controller
 @RestController
@@ -62,6 +69,28 @@ public class StockController {
         return returnList;
     }
 
+    @RequestMapping(path = "/{gameId}/available-balance", method = RequestMethod.GET)
+    public BigDecimal getCurrentLoggedInUserCertainGameAvailableBalance(Principal user, @PathVariable int gameId){
+        String username = user.getName();
+        int userId = userDao.findIdByUsername(username);
+        BigDecimal availableBalance = gameDao.getGameUserAvailableBalance(gameId, userId);
+        return availableBalance;
+    }
+
+    @RequestMapping(path = "/{gameId}/total-balance", method = RequestMethod.GET)
+    public BigDecimal getCurrentLoggedInUserCertainGameTotalBalance(Principal user, @PathVariable int gameId){
+        String username = user.getName();
+        int userId = userDao.findIdByUsername(username);
+        BigDecimal totalBalance = gameDao.getGameUserTotalBalance(gameId, userId);
+        return totalBalance;
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(method = RequestMethod.POST)
+    public boolean createStock(@Valid @RequestBody Stock stock) {
+        stockDao.createStock(stock);
+        return true;
+    }
 //    @ResponseStatus(HttpStatus.CREATED)
 //    @RequestMapping(path = "", method = RequestMethod.POST)
 //    public boolean create(@Valid @RequestBody Stock stock) {
@@ -84,8 +113,12 @@ public class StockController {
     public boolean delete(@Valid @PathVariable int stockId) {
         return stockDao.deleteStock(stockId);
     }
-    @Autowired
-    private StocksApi stocksApi;
+    private StocksApi stocksApi = new StocksApi();
+
+    @GetMapping(path = "/stocks")
+    public StockApiDTO getStocks(){
+        return stocksApi.stockData();
+    }
 
 //    @GetMapping(path = "/stocks")
 //    public StockApiDTO getStocks(){

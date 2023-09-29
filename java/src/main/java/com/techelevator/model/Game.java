@@ -1,5 +1,7 @@
 package com.techelevator.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -9,54 +11,35 @@ import java.util.Collections;
 import java.util.List;
 
 public class Game {
+
     private int gameId;
-    @NotEmpty
+
+    @NotEmpty(message = "Please enter the name of game")
     private String nameOfGame;
+
     private LocalDate startDate;
+
     private LocalDate endDate;
-    @NotEmpty
+
+    @NotEmpty(message = "Please enter owner name")
     private String ownerName;
-    private boolean isRealGame;
-    private boolean currentGame;
-    private int daysOfPlaying;
+
+    private boolean currentGame=true;
 
     public Game() {
     }
 
-    public Game(String nameOfGame, String ownerName, boolean isRealGame) {
+    public Game(String nameOfGame, String ownerName) {
         this.nameOfGame = nameOfGame;
         this.startDate = LocalDate.now();
         this.ownerName = ownerName;
-        this.isRealGame = isRealGame;
-        this.currentGame = true;
-        this.daysOfPlaying = 0;
     }
 
-    public Game(String nameOfGame, LocalDate startDate, LocalDate endDate, String ownerName,
-                boolean isRealGame) {
+    public Game(String nameOfGame, LocalDate startDate, LocalDate endDate, String ownerName) {
         this.nameOfGame = nameOfGame;
         this.startDate = startDate;
         this.endDate = endDate;
         this.ownerName = ownerName;
-        this.isRealGame = isRealGame;
-        this.currentGame = true;
-    }
-
-    public boolean isRealGame() {
-        return isRealGame;
-    }
-
-    public void setRealGame(boolean realGame) {
-        isRealGame = realGame;
-    }
-
-    public long getDaysOfPlaying() {
-        long days = Math.abs(ChronoUnit.DAYS.between(this.startDate, this.endDate));
-        return days;
-    }
-
-    public void setDaysOfPlaying(int daysOfPlaying) {
-        this.daysOfPlaying = daysOfPlaying;
     }
 
     public int getGameId() {
@@ -115,9 +98,7 @@ public class Game {
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", ownerName='" + ownerName + '\'' +
-                ", isRealGame=" + isRealGame +
                 ", currentGame=" + currentGame +
-                ", daysOfPlaying=" + daysOfPlaying +
                 '}';
     }
 

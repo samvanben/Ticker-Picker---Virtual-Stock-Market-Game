@@ -2,24 +2,29 @@ package com.techelevator.model;
 
 import java.math.BigDecimal;
 
-public class gameUser {
-    private int gameUserId=0;
-    private int game_id;
-    private int user_id;
+public class GameUser {
+
+    private int gameUserId;
+
+    private int gameId;
+
+    private int userId;
+
     private BigDecimal availableBalance;
+
     private BigDecimal totalBalance;
-    public gameUser() {
+    public GameUser() {
     }
-    public gameUser(int game_id, int user_id, BigDecimal availableBalance, BigDecimal totalBalance) {
-        this.game_id = game_id;
-        this.user_id = user_id;
+    public GameUser(int gameId, int userId, BigDecimal availableBalance, BigDecimal totalBalance) {
+        this.gameId = gameId;
+        this.userId = userId;
         this.availableBalance = availableBalance;
         this.totalBalance = totalBalance;
     }
-    public gameUser(int gameUserId, int game_id, int user_id, BigDecimal availableBalance, BigDecimal totalBalance) {
+    public GameUser(int gameUserId, int gameId, int userId, BigDecimal availableBalance, BigDecimal totalBalance) {
         this.gameUserId = gameUserId;
-        this.game_id = game_id;
-        this.user_id = user_id;
+        this.gameId = gameId;
+        this.userId = userId;
         this.availableBalance = availableBalance;
         this.totalBalance = totalBalance;
     }
@@ -32,20 +37,20 @@ public class gameUser {
         this.gameUserId = gameUserId;
     }
 
-    public int getGame_id() {
-        return game_id;
+    public int getGameId() {
+        return this.gameId;
     }
 
-    public void setGame_id(int game_id) {
-        this.game_id = game_id;
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public BigDecimal getAvailableBalance() {
@@ -66,10 +71,10 @@ public class gameUser {
 
     @Override
     public String toString() {
-        return "gameUser{" +
+        return "GameUser{" +
                 "gameUserId=" + gameUserId +
-                ", game_id=" + game_id +
-                ", user_id=" + user_id +
+                ", game_id=" + userId +
+                ", user_id=" + userId +
                 ", availableBalance=" + availableBalance +
                 ", totalBalance=" + totalBalance +
                 '}';

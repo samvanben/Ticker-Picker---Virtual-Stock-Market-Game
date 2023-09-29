@@ -5,11 +5,10 @@ import java.math.BigDecimal;
 
 public class Stock {
     private int stockId;
-    @NotEmpty
+    @NotEmpty(message = "Please enter symbol for stock")
     private String symbol;
     private BigDecimal askPrice;
     private BigDecimal bidPrice;
-    @NotEmpty
     private String companyName;
     private String description;
     private String CEO;
@@ -21,9 +20,9 @@ public class Stock {
         this.symbol = symbol;
     }
 
-    public Stock(String symbol, BigDecimal bidPrice) {
+    public Stock(String symbol, BigDecimal askPrice) {
         this.symbol = symbol;
-        this.bidPrice = bidPrice;
+        this.askPrice = askPrice;
     }
 
     public Stock(int stockId, String symbol, BigDecimal askPrice, BigDecimal bidPrice, String companyName, String description, String CEO) {

@@ -4,6 +4,7 @@ import com.techelevator.exception.DaoException;
 import com.techelevator.model.Game;
 import com.techelevator.model.Stock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -98,7 +99,17 @@ public class JdbcStockDao implements StockDao {
 
     @Override
     public int createStock(Stock stock) {
-        return 0;
+        int stockId = 0;
+        String sql = "INSERT INTO stock (symbol, current_share_price) VALUES (?, ?) returning stock_id;";
+        try{
+            stockId = jdbcTemplate.queryForObject(sql, int.class, stock.getSymbol(), stock.getAskPrice());
+            stock.setStockId(stockId);
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        } catch (DataIntegrityViolationException e){
+            throw new DaoException("data integrity violation", e);
+        }
+        return stockId;
     }
 
     @Override

@@ -1,9 +1,6 @@
 package com.techelevator.model;
 
 public class StockApiDTO {
-    private String ticker = "";
-
-    private boolean adjusted = false;
 
     private String symbol = "";
 
@@ -35,19 +32,4 @@ public class StockApiDTO {
         this.symbol = symbol;
     }
 
-    public String getTicker() {
-        return ticker;
-    }
-
-    public void setTicker(String ticker) {
-        this.ticker = ticker;
-    }
-
-    public boolean isAdjusted() {
-        return adjusted;
-    }
-
-    public void setAdjusted(boolean adjusted) {
-        this.adjusted = adjusted;
-    }
 }
