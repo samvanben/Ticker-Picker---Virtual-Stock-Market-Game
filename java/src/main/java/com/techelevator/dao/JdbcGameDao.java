@@ -54,9 +54,9 @@ public class JdbcGameDao implements GameDao {
     @Override
     public Map<String, BigDecimal> orderGameMembersByTotalBalanceByGameId(int gameId) {
         Map<String, BigDecimal> orderedMap = new LinkedHashMap<>();
-        String sql = "SELECT total_balance, username FROM game_user JOIN users ON users.user_id=game_user.user_id WHERE game_id = ? ORDER BY total_balance desc; ";
+        String sql = "SELECT total_balance, username FROM game_user JOIN users ON users.user_id = game_user.user_id WHERE game_id = ? ORDER BY total_balance desc; ";
         try{
-            SqlRowSet SqlRowSet = jdbcTemplate.queryForRowSet(sql);
+            SqlRowSet SqlRowSet = jdbcTemplate.queryForRowSet(sql, gameId);
             while (SqlRowSet.next()){
                 BigDecimal totalBalance = SqlRowSet.getBigDecimal("total_balance");
                 String username = SqlRowSet.getNString("username");
@@ -103,13 +103,13 @@ public class JdbcGameDao implements GameDao {
     @Override
     public int createGame(Game gameToCreate) {
         int playerId = 0;
-        String sql = "INSERT INTO game (name_of_game, game_start_date, game_end_date, owner_name) VALUES (?, ?, ?, ?) RETURNING game_id";
+        String sql = "INSERT INTO game (name_of_game, game_start_date, game_end_date, owner_name) VALUES (?, ?, ?, ?) RETURNING game_id;";
         String addOwnerToGameSql = "INSERT INTO game_user(game_id, user_id) VALUES (?, ?) RETURNING game_user_id; ";
-        String getUserIdSql = "SELECT user_id FROM users WHERE username=? ";
+        String getUserIdSql = "SELECT user_id FROM users WHERE username=? ;";
         try{
             // create a game on database
             int gameId = jdbcTemplate.queryForObject(sql, int.class, gameToCreate.getNameOfGame(), gameToCreate.getStartDate(),
-                    gameToCreate.getEndDate(), gameToCreate.getOwnerName());
+                    gameToCreate.getEndDate(), gameToCreate.getOwnerName(), gameToCreate.getGameId());
             gameToCreate.setGameId(gameId);
 
             // get creator userId from database

@@ -73,8 +73,7 @@ public class JdbcStockDao implements StockDao {
     @Override
     public List<Stock> getStocksByOneUser(int userId) {
         List<Stock> stocks = new ArrayList<>();
-        String sql = "SELECT * FROM stock WHERE stock_id in "
-                + "(SELECT user_id FROM user join transaction ON transaction.user_id = user.user_id WHERE user_id = ?)";
+        String sql = "SELECT * FROM stock JOIN transaction ON stock.stock_id = transaction.stock_id WHERE user_id = ?";
         try{
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
             while (results.next()) {
@@ -94,7 +93,17 @@ public class JdbcStockDao implements StockDao {
 
     @Override
     public List<Stock> getStocksByOneUserOfGame(int userId, int gameId) {
-        return null;
+        List<Stock> stocks = new ArrayList<>();
+        String sql = "SELECT * FROM stock JOIN transaction ON stock.stock_id = transaction.stock_id WHERE user_id = ? AND game_id = ? ;";
+        try{
+            SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, userId, gameId);
+            while (sqlRowSet.next()){
+                stocks.add(mapRowToStock(sqlRowSet));
+            }
+        }catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return stocks;
     }
 
     @Override
