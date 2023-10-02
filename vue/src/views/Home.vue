@@ -25,7 +25,7 @@
           </tr>
         </table>
         <div id="current-buttons">
-          <button id="view-all">View Games</button>
+          <router-link id="lobby-tag" v-bind:to="{name: 'lobby'}" v-if="$store.state.token != ''"><button id="view-all">View Games</button></router-link>
           <button id="new-game">+ New Game</button>
         </div>
     </div>
@@ -53,7 +53,7 @@
             <td>1 / 10</td>
           </tr>
         </table>
-        <button id="view-all">View Games</button>
+        <router-link id="leaderboard-tag" v-bind:to="{name: 'leaderboard'}" v-if="$store.state.token != ''"><button id="view-all">View Games</button></router-link>
     </div>
     <div id="home-bin-3" class="home-bin-lower">
         <h2 id="bin3-head">Stock To Watch</h2>
@@ -62,20 +62,33 @@
             <th>Company</th>
             <th>Ticker Symbol</th>
             <th>Price</th>
-            <th>% Change</th>
-            <th>$ Change</th>
+            <th>Exchange</th>
           </tr>
           <tr>
             <td>Apple</td>
             <td>$AAPL</td>
             <td>$174.10</td>
-            <td id="percentage">0.58%</td>
-            <td id="dollar">$1.04</td>
+            <td>NASDAQ</td>
           </tr>
         </table>  
     </div>
     <div id="home-bin-4" class="home-bin-lower">
-        <h2 id="bin4-head">Bin 4</h2>
+      <div id="quick-search">
+        <h2 id="bin4-head">Search Stocks: </h2>
+        <input type="search" placeholder="  Search for a stock...">
+      </div>
+        <table id="search-stock">
+          <tr>
+            <th>Ticker Symbol</th>
+            <th>Price</th>
+            <th>Exchange</th>
+          </tr>
+          <tr>
+            <td>$AAPL</td>
+            <td>$174.10</td>
+            <td>NASDAQ</td>
+          </tr>
+        </table>
     </div>
   </div>
 </template>
@@ -94,11 +107,11 @@
   }
   #current-games {
     color: white;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
   }
   #past-games {
     color: white;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
   }
   #hot-stock {
     color: white;
@@ -107,10 +120,7 @@
   th {
     padding-left: 20px;
     padding-right: 20px;
-    padding-bottom: 15px;
-  }
-  td {
-    padding-bottom: 5px;
+    padding-bottom: 0px;
   }
   .home div h2 {
     color: white;
@@ -120,12 +130,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-bottom: 5px;
   }
   #home-bin-2 {
     grid-area: bin2;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-bottom: 5px;
   }
   #new-game {
     background-color: rgb(90, 212, 90);
@@ -143,6 +155,7 @@
     background-color: rgb(43, 114, 43);
     font-weight: bold;
   }
+
   #view-all {
     background-color: rgb(90, 212, 90);
     padding-top: 10px;
@@ -166,11 +179,17 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-bottom: 5px;
   }
    #home-bin-4 {
     grid-area: bin4;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    padding-bottom: 5px;
+  }
+  #quick-search {
+    display: flex;
     align-items: center;
   }
   .home-bin-upper {
@@ -191,12 +210,16 @@
     border-width: 1px;
     box-shadow: 12px 12px 10px black;
   }
-  #percentage {
-    color: rgb(90, 212, 90);
+  #search-stock {
+    color: white;
   }
-  #dollar {
-    color: rgb(90, 212, 90); 
+  input {
+    margin-left: 20px;
+    border-radius: 5px;
+    border-style: none;
+    height: 50%;
   }
+  
 
 
   @media (max-width: 1000px) {

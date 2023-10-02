@@ -6,6 +6,9 @@ import Logout from '../views/Logout.vue'
 import Register from '../views/Register.vue'
 import store from '../store/index'
 import NotFound from "../views/NotFound.vue"
+import Lobby from "../views/Lobby.vue"
+import GenLeader from "../views/GeneralLeaderboard.vue"
+import SpecLeader from "../views/SpecificLeaderboard.vue"
 
 
 Vue.use(Router)
@@ -59,19 +62,24 @@ const router = new Router({
       // temporary, goes to 404 page
       path: "/lobby",
       name: "lobby",
-      component: NotFound,
+      component: Lobby,
     },
     {
       // temporary, goes to 404 page
       path: "/leaderboard",
       name: "leaderboard",
-      component: NotFound,
+      component: GenLeader,
     },
     {
       // temporary, goes to 404 page
       path: "/news",
       name: "news",
       component: NotFound,
+    },
+    {
+      path: "/leaderboard/spec",
+      name: "spec-leaderboard",
+      component: SpecLeader,
     },
     {
       path:'/:pathMatch(.*)*',

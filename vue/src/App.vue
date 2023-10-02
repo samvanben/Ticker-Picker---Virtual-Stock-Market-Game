@@ -1,14 +1,12 @@
 <template>
   <div id="app">
     <div id="nav">
-      <img id="icon-header" src="..\src\assets\icon header.png" alt="icon">
+      <router-link v-bind:to="{ name: 'home' }"><img id="icon-header" src="..\src\assets\icon header.png" alt="icon"></router-link>
       <div id="links">
         <router-link v-bind:to="{ name: 'home' }" v-if="$store.state.token != ''">Home</router-link>&nbsp;&nbsp;&nbsp;
         <router-link id="lobby-tag" v-bind:to="{name: 'lobby'}" v-if="$store.state.token != ''">Lobby</router-link>&nbsp;&nbsp;&nbsp;
         <router-link id="leaderboard-tag" v-bind:to="{name: 'leaderboard'}" v-if="$store.state.token != ''">Leaderboard</router-link>&nbsp;&nbsp;&nbsp;
-        <router-link id="news-tag" v-bind:to="{name: 'news'}" v-if="$store.state.token != ''">Latest News</router-link>&nbsp;&nbsp;&nbsp;
         <router-link v-bind:to="{ name: 'logout' }" v-if="$store.state.token != ''">Logout</router-link>
-        <input type="search" placeholder="  Search for a stock..." v-if="$store.state.token != ''">
       </div>
     </div>
     <router-view />
@@ -64,13 +62,7 @@
     color: rgb(56, 216, 56);
     font-size: 110%;
   }
-  input {
-    margin-left: 20px;
-    border-radius: 5px;
-    border-style: none;
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
+  
 
   
   
