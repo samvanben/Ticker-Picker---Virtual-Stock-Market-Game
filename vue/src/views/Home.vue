@@ -26,7 +26,9 @@
         </table>
         <div id="current-buttons">
           <button id="view-all">View Games</button>
-          <button id="new-game">+ New Game</button>
+          <a href="/new_game">
+            <button id="new-game">+ New Game</button>
+          </a>
         </div>
     </div>
     <div id="home-bin-2" class="home-bin-upper">

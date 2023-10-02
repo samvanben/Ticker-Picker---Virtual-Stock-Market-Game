@@ -14,8 +14,8 @@ public class StockListDTO {
     @JsonProperty("JPM")
     private StockApiDTO jpm;
 
-    @JsonProperty("MFST")
-    private StockApiDTO mfst;
+    @JsonProperty("MSFT")
+    private StockApiDTO msft;
 
     public StockApiDTO getTSLA() {
         return tsla;
@@ -49,12 +49,12 @@ public class StockListDTO {
         this.jpm = jpm;
     }
 
-    public StockApiDTO getMfst() {
-        return mfst;
+    public StockApiDTO getMsft() {
+        return msft;
     }
 
-    public void setMfst(StockApiDTO mfst) {
-        this.mfst = mfst;
+    public void setMsft(StockApiDTO msft) {
+        this.msft = msft;
     }
 }
 

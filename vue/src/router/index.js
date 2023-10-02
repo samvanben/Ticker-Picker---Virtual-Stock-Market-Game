@@ -6,7 +6,8 @@ import Logout from '../views/Logout.vue'
 import Register from '../views/Register.vue'
 import store from '../store/index'
 import NotFound from "../views/NotFound.vue"
-
+import NewGame from "../views/NewGame.vue"
+import Portfolio from "../views/Portfolio.vue"
 
 Vue.use(Router)
 
@@ -72,6 +73,22 @@ const router = new Router({
       path: "/news",
       name: "news",
       component: NotFound,
+    },
+    {
+      path: "/new_game",
+      name: "newGame",
+      component: NewGame,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/portfolio",
+      name: "portfolio",
+      component: Portfolio,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path:'/:pathMatch(.*)*',

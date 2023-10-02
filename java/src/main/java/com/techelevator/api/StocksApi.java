@@ -93,7 +93,7 @@ public class StocksApi{
     }
 
     public StockListDTO stockList(){
-        return restTemplate.getForObject(API_BASE_URL + "?symbol=AAPL,TSLA,GOOGL,JPM,MFST&dp=2" + API_KEY, StockListDTO.class);
+        return restTemplate.getForObject(API_BASE_URL + "?symbol=AAPL,TSLA,GOOGL,JPM,MSFT&dp=2" + API_KEY, StockListDTO.class);
     }
 
 }
