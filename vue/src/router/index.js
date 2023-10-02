@@ -6,9 +6,14 @@ import Logout from '../views/Logout.vue'
 import Register from '../views/Register.vue'
 import store from '../store/index'
 import NotFound from "../views/NotFound.vue"
+
 import Lobby from "../views/Lobby.vue"
 import GenLeader from "../views/GeneralLeaderboard.vue"
 import SpecLeader from "../views/SpecificLeaderboard.vue"
+
+
+import NewGame from "../views/NewGame.vue"
+import Portfolio from "../views/Portfolio.vue"
 
 
 Vue.use(Router)
@@ -77,9 +82,26 @@ const router = new Router({
       component: NotFound,
     },
     {
+<<<<<<< HEAD
       path: "/leaderboard/spec",
       name: "spec-leaderboard",
       component: SpecLeader,
+=======
+      path: "/new_game",
+      name: "newGame",
+      component: NewGame,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/portfolio",
+      name: "portfolio",
+      component: Portfolio,
+      meta: {
+        requiresAuth: true
+      }
+>>>>>>> main
     },
     {
       path:'/:pathMatch(.*)*',

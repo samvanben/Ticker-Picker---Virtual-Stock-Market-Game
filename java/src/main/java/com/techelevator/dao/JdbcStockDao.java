@@ -11,6 +11,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,6 +120,19 @@ public class JdbcStockDao implements StockDao {
             throw new DaoException("data integrity violation", e);
         }
         return stockId;
+    }
+    public BigDecimal getStockPriceByStockId(int stockId){
+        BigDecimal price = BigDecimal.valueOf(0);
+        String sql = "Select current_share_price from Stock where stock_id = ?";
+        try{
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, stockId);
+            if(results.next()) {
+                price = (BigDecimal) results;
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return price;
     }
 
     @Override

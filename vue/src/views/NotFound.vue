@@ -25,7 +25,7 @@ export default {
     margin-right: 500px;
     margin-top: 10px;
 }
-h1 {
+#error h1 {
     color: rgba(255, 0, 0, 0.849);
     text-align: center;
     font-family:Verdana, Geneva, Tahoma, sans-serif;
@@ -34,7 +34,7 @@ h1 {
     margin-top: -5px
     
 }
-h2 {
+#error h2 {
     color: white;
     text-align: center;
     font-family:Verdana, Geneva, Tahoma, sans-serif;

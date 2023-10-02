@@ -125,4 +125,16 @@ public class GameController {
     public boolean delete(@Valid @PathVariable int gameId) {
         return gameDao.deleteGame(gameId)==0 ? false : true;
     }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(path = "/{gameId}/{userId}/buy/{stockId}}", method = RequestMethod.PUT)
+    public boolean buyStocksBalanceChange(@Valid @PathVariable int gameId, int userId, int stockId) {
+        BigDecimal amount = stockDao.getStockPriceByStockId(stockId);
+        return gameDao.subtractFromGameUserAvailableBalance(amount, gameId, userId);
+    }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(path = "/{gameId}/{userId}/sell/{stockId}}", method = RequestMethod.PUT)
+    public boolean sellStocksBalanceChange(@Valid @PathVariable int gameId, int userId, int stockId) {
+        BigDecimal amount = stockDao.getStockPriceByStockId(stockId);
+        return gameDao.addToGameUserAvailableBalance(amount, gameId, userId);
+    }
 }

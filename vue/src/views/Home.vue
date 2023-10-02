@@ -27,6 +27,10 @@
         <div id="current-buttons">
           <router-link id="lobby-tag" v-bind:to="{name: 'lobby'}" v-if="$store.state.token != ''"><button id="view-all">View Games</button></router-link>
           <button id="new-game">+ New Game</button>
+          <button id="view-all">View Games</button>
+          <a href="/new_game">
+            <button id="new-game">+ New Game</button>
+          </a>
         </div>
     </div>
     <div id="home-bin-2" class="home-bin-upper">
