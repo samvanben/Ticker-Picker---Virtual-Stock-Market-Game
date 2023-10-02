@@ -8,26 +8,14 @@
             <th>Game End Date</th>
             <th>Current Place</th>
           </tr>
-          <tr>
-            <td>Game One</td>
-            <td>12/12/2023</td>
-            <td>1 / 10</td>
-          </tr>
-          <tr>
-            <td>Game Two</td>
-            <td>12/12/2023</td>
-            <td>1 / 10</td>
-          </tr>
-          <tr>
-            <td>Game Three</td>
-            <td>12/12/2023</td>
-            <td>1 / 10</td>
+          <tr v-for="game in games.slice(0,3)" v-bind:key="game.gameId">
+            <td>{{game.nameOfGame}}</td>
+            <td>{{game.endDate}}</td>
+            <td>balance</td>
           </tr>
         </table>
         <div id="current-buttons">
           <router-link id="lobby-tag" v-bind:to="{name: 'lobby'}" v-if="$store.state.token != ''"><button id="view-all">View Games</button></router-link>
-          <button id="new-game">+ New Game</button>
-          <button id="view-all">View Games</button>
           <a href="/new_game">
             <button id="new-game">+ New Game</button>
           </a>
@@ -79,7 +67,7 @@
     <div id="home-bin-4" class="home-bin-lower">
       <div id="quick-search">
         <h2 id="bin4-head">Search Stocks: </h2>
-        <input type="search" placeholder="  Search for a stock...">
+        <input v-on:keyup.enter="getStock" v-model="stockToSearch" type="search" placeholder="  Search for a stock...">
       </div>
         <table id="search-stock">
           <tr>
@@ -88,14 +76,50 @@
             <th>Exchange</th>
           </tr>
           <tr>
-            <td>$AAPL</td>
-            <td>$174.10</td>
-            <td>NASDAQ</td>
+            <td>${{searchStock.symbol}}</td>
+            <td>${{searchStock.close}}</td>
+            <td>{{searchStock.exchange}}</td>
           </tr>
         </table>
     </div>
   </div>
 </template>
+
+<script>
+import StockService from '../services/StockService';
+import GameService from '../services/GameService';
+
+export default {
+  name: "home",
+  data() {
+    return {
+      stockToSearch: "",
+      searchStock: {
+        symbol: "FAKE",
+        close: "999.99",
+        exchange: "IDK"
+      },
+      // We want to return a list of games the current user is in
+      games: [],
+    };
+  },
+  methods: {
+    viewStock(symbol) {
+      this.$router(`/${symbol}`)
+    },
+    getStock() {
+      StockService.getSearchStock(this.stockToSearch).then((response) => {
+        this.searchStock = response.data;
+      })
+    }
+  },
+  created() {
+    GameService.getAllGames().then((response) => {
+      this.games = response.data;
+    })
+  }
+}
+</script>
 
 <style scoped>
   .home {
@@ -237,9 +261,3 @@
     }
   }
 </style>
-
-<script>
-export default {
-  name: "home"
-};
-</script>

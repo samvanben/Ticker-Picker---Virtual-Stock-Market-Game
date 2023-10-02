@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Controller
 @RestController
+@CrossOrigin
 //@PreAuthorize("isAuthenticated()")
 @RequestMapping(path = "/api/stocks")
 public class StockController {
