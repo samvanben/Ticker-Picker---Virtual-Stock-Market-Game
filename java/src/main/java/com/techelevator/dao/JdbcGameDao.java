@@ -140,18 +140,12 @@ public class JdbcGameDao implements GameDao {
     @Override
     public int createGame(Game gameToCreate) {
         int playerId = 0;
-
-        String sql = "INSERT INTO game (name_of_game, game_start_date, game_end_date, owner_name) VALUES (?, ?, ?, ?) RETURNING game_id;";
-
+        String sql = "INSERT INTO game (name_of_game, owner_name) VALUES (?, ?) RETURNING game_id";
         String addOwnerToGameSql = "INSERT INTO game_user(game_id, user_id) VALUES (?, ?) RETURNING game_user_id; ";
-        String getUserIdSql = "SELECT user_id FROM users WHERE username=? ;";
+        String getUserIdSql = "SELECT user_id FROM users WHERE username=? ";
         try{
             // create a game on database
-
-            int gameId = jdbcTemplate.queryForObject(sql, int.class, gameToCreate.getNameOfGame(), gameToCreate.getStartDate(),
-                    gameToCreate.getEndDate(), gameToCreate.getOwnerName(), gameToCreate.getGameId());
-
-
+            int gameId = jdbcTemplate.queryForObject(sql, int.class, gameToCreate.getNameOfGame(), gameToCreate.getOwnerName());
             gameToCreate.setGameId(gameId);
 
             // get creator userId from database
