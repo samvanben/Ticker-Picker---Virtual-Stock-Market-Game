@@ -93,9 +93,9 @@ export default {
     return {
       stockToSearch: "",
       searchStock: {
-        symbol: "FAKE",
-        close: "999.99",
-        exchange: "IDK"
+        symbol: "----",
+        close: "---.--",
+        exchange: "-----"
       },
       // We want to return a list of games the current user is in
       games: [],
@@ -111,11 +111,11 @@ export default {
       })
     }
   },
-  created() {
-    GameService.getAllGames().then((response) => {
-      this.games = response.data;
-    })
-  }
+    created() {
+      GameService.getAllGames().then((response) => {
+        this.games = response.data;
+      })
+    }
 }
 </script>
 

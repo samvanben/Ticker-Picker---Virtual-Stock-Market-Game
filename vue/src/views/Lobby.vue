@@ -11,33 +11,19 @@
             <th>Game Name</th>
             <th>Game Start Date</th>
             <th>Game End Date</th>
-            <th>User Standing</th>
-            <th>Balance</th>
+            <!-- user ranking -->
+            <th>Purchasing Power</th>
+            <th>Portfolio Value</th>
             <th>View Portfolio</th>
           </tr>
-          <tr class="row">
-            <td>Game One</td>
-            <td>12/12/2023</td>
-            <td>12/12/2023</td>
-            <td>1 / 10</td>
-            <td>$88,000.00</td>
+          <tr v-on:click="setGameId" v-for="game in games" v-bind:key="game.gameId">
+            <td>{{game.nameOfGame}}</td>
+            <td>{{game.startDate}}</td>
+            <td>{{game.endDate}}</td>
+            <!-- index of -->
+            <td>${{game.availableBalance}}</td>
+            <td>${{game.totalBalance}}</td>
             <td><router-link id="port-tag" v-bind:to="{name: 'portfolio'}" v-if="$store.state.token != ''"><button id="portfolio">View Portfolio</button></router-link></td>
-          </tr>
-          <tr class="row">
-            <td>Game Two</td>
-            <td>12/12/2023</td>
-            <td>12/12/2023</td>
-            <td>1 / 10</td>
-            <td>$88,000.00</td>
-            <td><router-link id="port-tag" v-bind:to="{name: 'portfolio'}" v-if="$store.state.token != ''"><button id="portfolio">View Portfolio</button></router-link></td>
-          </tr>
-          <tr class="row">
-            <td>Game Three</td>
-            <td>12/12/2023</td>
-            <td>12/12/2023</td>
-            <td>1 / 10</td>
-            <td>$88,000.00</td>
-            <td><button class="port-button">View Portfolio</button></td>
           </tr>
         </table>
     </div>
@@ -45,8 +31,26 @@
 </template>
 
 <script>
+import GameService from '../services/GameService';
+
 export default {
     name: "Lobby",
+    data() {
+      return {
+        games: [],
+        
+      }
+    },
+    methods: {
+      setGameId() {
+        this.$store.state.commit('SET_GAME_ID', this.gameId)
+      }
+    },
+    created() {
+    GameService.getAllGames().then((response) => {
+      this.games = response.data;
+    })
+  }
 }
 </script>
 

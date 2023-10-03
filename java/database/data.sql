@@ -18,7 +18,7 @@ INSERT INTO game_user (game_id, user_id) VALUES ('2','3');
 INSERT INTO game_user (game_id, user_id) VALUES ('2','5');
 INSERT INTO game_user (game_id, user_id) VALUES ('2','6');
 
-INSERT INTO stock (symbol, company_name) VALUES ('AAPL', 'Apple');
+INSERT INTO stock (symbol, current_share_price, company_name) VALUES ('AAPL', '250', 'Apple');
 INSERT INTO stock (symbol, company_name) VALUES ('MSFT', 'Microsoft');
 INSERT INTO stock (symbol, company_name) VALUES ('AMZN', 'Amazon');
 INSERT INTO stock (symbol, company_name) VALUES ('TSLA', 'Tesla');

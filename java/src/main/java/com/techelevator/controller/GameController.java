@@ -127,8 +127,10 @@ public class GameController {
         return gameDao.deleteGame(gameId)==0 ? false : true;
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(path = "/{gameId}/{userId}/buy/{symbol}", method = RequestMethod.PUT)
-    public boolean buyStocksBalanceChange(@Valid @PathVariable int gameId, int userId, String symbol) {
+    @RequestMapping(path = "/{gameId}/buy/{symbol}", method = RequestMethod.PUT)
+    public boolean buyStocksBalanceChange(@Valid @PathVariable int gameId, Principal user, String symbol) {
+        String username = user.getName();
+        int userId = userDao.findIdByUsername(username);
         BigDecimal amount = stockDao.getStockPriceBySymbol(symbol);
         return gameDao.subtractFromGameUserAvailableBalance(amount, gameId, userId);
     }

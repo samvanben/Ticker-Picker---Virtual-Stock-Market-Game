@@ -108,18 +108,38 @@ public class JdbcGameDao implements GameDao {
     @Override
     public List<Game> getGamesByUserId(int userId) {
         List<Game> games = new ArrayList<>();
-        String sql = "SELECT * FROM game WHERE game_id in "
-                + "(SELECT game_id FROM game_user WHERE user_id = ?) ORDER BY game_id DESC";
+        String sql = "SELECT game_user.game_id, name_of_game, game_start_date, game_end_date, owner_name, is_current_game, " +
+                "game_user.available_balance, game_user.total_balance, game_user.user_id FROM game " +
+                "JOIN game_user ON game_user.game_id = game.game_id " +
+                "WHERE game_user.game_id in (SELECT game_id FROM game_user WHERE user_id = ?) AND game_user.user_id = ?";
         try{
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId, userId);
             while (results.next()) {
-                Game game = mapRowToGame(results);
+                Game game = mapRowToGameAddBalance(results);
                 games.add(game);
             }
         } catch (CannotGetJdbcConnectionException e){
             throw new DaoException( "cannot connect to server or database", e);
         }
         return games;
+    }
+
+    private Game mapRowToGameAddBalance(SqlRowSet results) {
+        Game game = new Game();
+        game.setGameId((results.getInt("game_id")));
+        game.setNameOfGame(results.getString("name_of_game"));
+
+        if (results.getDate("game_start_date") != null) {
+            game.setStartDate(results.getDate("game_start_date").toLocalDate());
+        }
+        if (results.getDate("game_end_date") != null) {
+            game.setEndDate(results.getDate("game_end_date").toLocalDate());
+        }
+        game.setOwnerName(results.getString("owner_name"));
+        game.setAvailableBalance(results.getBigDecimal("available_balance"));
+        game.setTotalBalance(results.getBigDecimal("total_balance"));
+        game.setUserId(results.getInt("user_id"));
+        return game;
     }
 
     @Override
