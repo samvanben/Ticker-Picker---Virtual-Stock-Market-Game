@@ -2,13 +2,14 @@
   <div class="portfolio">
       <div id="portfolio-bin" class="portfolio-bin">
         <h2 id="bin-head">Portfolio</h2>
+        <input v-model="numbers" type="number" id />
         <table id="portfolio-tab">
           <tr>
             <th>Ticker Symbol</th>
             <th>Price</th>
             <th>Exchange</th>
-            <th>Number of Shares</th>
-            <th>Quantity</th>
+            <!-- <th>Number of Shares</th> -->
+            
             <th>Buy</th>
             <th>Sell</th>
           </tr>
@@ -16,10 +17,10 @@
             <td>${{stock.symbol}}</td>
             <td>${{stock.close}}</td>
             <td>{{stock.exchange}}</td>
-            <td>0</td>
-            <input type="number" id />
-            <td button id="buy">+</td>
-            <td button id="sell">-</td>
+            <!-- <td>0</td> -->
+             
+            <td v-on:click.prevent="buyStocks(stock.symbol, stock)" button id="buy">+</td>
+            <td v-on:click.prevent="sellStocks(stock.symbol, stock)" button id="sell">-</td>
           </tr>
         </table>
 
@@ -42,14 +43,28 @@ export default {
       balance: 0,
       value: 0,
       stockList: [],
+      numbers: 0
     };
   },
 
+  methods: {
+    buyStocks(symbol, stock) {
+      BalanceService.buyStock(this.$route.params.id, symbol, this.numbers, stock).then((response) => {
+        this.balance = response.data;
+      })
+    },
+    sellStocks(symbol, stock) {
+      BalanceService.sellStock(this.$route.params.id, symbol, this.numbers, stock).then((response) => {
+        this.balance = response.data;
+      })
+    }
+  },
+
   created() {
-    BalanceService.getBalance(this.$store.state.currentGame).then((response) => {
+    BalanceService.getBalance(this.$route.params.id).then((response) => {
       this.balance = response.data;
     }),
-    BalanceService.getValue(this.$store.state.currentGame).then((response) => {
+    BalanceService.getValue(this.$route.params.id).then((response) => {
       this.value = response.data;
     }),
     StockService.getGameStockList().then((response) => {

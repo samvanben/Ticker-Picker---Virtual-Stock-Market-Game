@@ -9,5 +9,11 @@ export default {
         return axios.get(`/api/stocks/${gameId}/total-balance`)
     },
 
-    // buyStock()
+    buyStock(gameId, symbol, numbers, stock) {
+        return axios.put(`/api/games/${gameId}/buy/${symbol}/${numbers}`, stock)
+    },
+
+    sellStock(gameId, symbol, numbers, stock) {
+        return axios.put(`/api/games/${gameId}/sell/${symbol}/${numbers}`, stock)
+    },
 }

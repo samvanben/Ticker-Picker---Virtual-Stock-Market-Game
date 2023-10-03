@@ -12,19 +12,20 @@
             <th>Game Start Date</th>
             <th>Game End Date</th>
             <!-- user ranking -->
-            <th>Purchasing Power</th>
-            <th>Portfolio Value</th>
+            <th>Balance</th>
+            <!-- <th>Portfolio Value</th> -->
             <th>View Portfolio</th>
           </tr>
-          <tr v-on:click="setGameId" v-for="game in games" v-bind:key="game.gameId">
+          <tr v-for="game in games" v-bind:key="game.gameId">
             <td>{{game.nameOfGame}}</td>
             <td>{{game.startDate}}</td>
             <td>{{game.endDate}}</td>
             <!-- index of -->
             <td>${{game.availableBalance}}</td>
-            <td>${{game.totalBalance}}</td>
-            <td><router-link id="port-tag" v-bind:to="{name: 'portfolio'}" v-if="$store.state.token != ''"><button id="portfolio">View Portfolio</button></router-link></td>
+            <!-- <td>${{game.totalBalance}}</td> -->
+            <td><router-link v-bind:to="{name: 'portfolio', params:{id:game.gameId}}" id="port-tag" v-if="$store.state.token != ''"><button id="portfolio">View Portfolio</button></router-link></td>
           </tr>
+          <!-- v-on:click="setGameId(game.gameId)" -->
         </table>
     </div>
   </div>
@@ -42,8 +43,9 @@ export default {
       }
     },
     methods: {
-      setGameId() {
-        this.$store.state.commit('SET_GAME_ID', this.gameId)
+      setGameId(gameId) {
+        console.log(gameId)
+        this.$store.commit('SET_GAME_ID', gameId)
       }
     },
     created() {

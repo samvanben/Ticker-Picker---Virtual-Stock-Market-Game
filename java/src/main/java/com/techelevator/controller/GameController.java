@@ -7,12 +7,14 @@ import com.techelevator.dao.UserDao;
 import com.techelevator.exception.DaoException;
 import com.techelevator.model.Game;
 import com.techelevator.model.GameUser;
+import com.techelevator.model.StockApiDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.HashMap;
@@ -126,18 +128,54 @@ public class GameController {
     public boolean delete(@Valid @PathVariable int gameId) {
         return gameDao.deleteGame(gameId)==0 ? false : true;
     }
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(path = "/{gameId}/buy/{symbol}", method = RequestMethod.PUT)
-    public boolean buyStocksBalanceChange(@Valid @PathVariable int gameId, Principal user, String symbol) {
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    @RequestMapping(path = "/{gameId}/buy/{symbol}", method = RequestMethod.PUT)
+//    public boolean buyStocksBalanceChange(@Valid @PathVariable int gameId, Principal user, String symbol) {
+//        String username = user.getName();
+//        int userId = userDao.findIdByUsername(username);
+//        BigDecimal amount = stockDao.getStockPriceBySymbol(symbol);
+//        return gameDao.subtractFromGameUserAvailableBalance(amount, gameId, userId);
+//    }
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    @RequestMapping(path = "/{gameId}/{userId}/sell/{symbol}", method = RequestMethod.PUT)
+//    public boolean sellStocksBalanceChange(@Valid @PathVariable int gameId, int userId, String symbol) {
+//        BigDecimal amount = stockDao.getStockPriceBySymbol(symbol);
+//        return gameDao.addToGameUserAvailableBalance(amount, gameId, userId);
+//    }
+
+    @RequestMapping(path = "{gameId}/buy/{symbol}/{numbers}", method = RequestMethod.PUT)
+    public BigDecimal buyStock(@PathVariable String symbol, @PathVariable int gameId, @PathVariable int numbers, Principal user, @RequestBody StockApiDTO stock) {
+        // get current user's user id
+        String username = user.getName();
+
+        int userId = userDao.findIdByUsername(username);
+
+//        BigDecimal stockPrice = stockDao.getStockPriceBySymbol(symbol);
+        // get transaction amount and commission to check if available balance can cover the transaction
+        BigDecimal transactionAmount = BigDecimal.valueOf(stock.getClose()).multiply(BigDecimal.valueOf(numbers));
+        BigDecimal commission = BigDecimal.valueOf(19.95);
+        BigDecimal totalAmount = transactionAmount.add(commission);
+        // if available balance can cover the transaction, proceed to buy
+        if(totalAmount.compareTo(gameDao.getAvailableBalanceByUserGame(userId, gameId)) <= 0){
+            gameDao.subtractFromGameUserAvailableBalance(totalAmount, gameId, userId);
+        } else {
+            new IOException("Insufficient Fund");
+        }
+        return gameDao.getAvailableBalanceByUserGame(userId, gameId);
+    }
+
+    @RequestMapping(path = "{gameId}/sell/{symbol}/{numbers}", method = RequestMethod.PUT)
+    public BigDecimal sellStock(@PathVariable String symbol, @PathVariable int gameId, @PathVariable int numbers, Principal user, @RequestBody StockApiDTO stock) {
+        // get current user's user id
         String username = user.getName();
         int userId = userDao.findIdByUsername(username);
-        BigDecimal amount = stockDao.getStockPriceBySymbol(symbol);
-        return gameDao.subtractFromGameUserAvailableBalance(amount, gameId, userId);
-    }
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(path = "/{gameId}/{userId}/sell/{symbol}", method = RequestMethod.PUT)
-    public boolean sellStocksBalanceChange(@Valid @PathVariable int gameId, int userId, String symbol) {
-        BigDecimal amount = stockDao.getStockPriceBySymbol(symbol);
-        return gameDao.addToGameUserAvailableBalance(amount, gameId, userId);
+
+//        BigDecimal stockPrice = stockDao.getStockPriceBySymbol(symbol);
+        // get transaction amount and commission, proceed to sell
+        BigDecimal transactionAmount = BigDecimal.valueOf(stock.getClose()).multiply(BigDecimal.valueOf(numbers));
+        BigDecimal commission = BigDecimal.valueOf(19.95);
+        BigDecimal totalAmount = transactionAmount.add(commission);
+        gameDao.addToGameUserAvailableBalance(totalAmount, gameId, userId);
+        return gameDao.getAvailableBalanceByUserGame(userId, gameId);
     }
 }

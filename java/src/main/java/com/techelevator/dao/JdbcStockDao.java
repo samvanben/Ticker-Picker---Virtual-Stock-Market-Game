@@ -121,13 +121,27 @@ public class JdbcStockDao implements StockDao {
         }
         return stockId;
     }
-    public BigDecimal getStockPriceBySymbol(String symbol){
-        BigDecimal price = BigDecimal.valueOf(0);
-        String sql = "Select current_share_price from Stock where symbol = ?";
+//    public BigDecimal getStockPriceBySymbol(String symbol){
+//        BigDecimal price = BigDecimal.valueOf(0);
+//        String sql = "Select current_share_price from Stock where symbol = ?";
+//        try{
+//            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, symbol);
+//            if(results.next()) {
+//                price = (BigDecimal) results;
+//            }
+//        } catch (CannotGetJdbcConnectionException e){
+//            throw new DaoException( "cannot connect to server or database", e);
+//        }
+//        return price;
+//    }
+
+    public BigDecimal getStockPriceBySymbol(String symbol) {
+        BigDecimal price = new BigDecimal(0);
+        String sql = "SELECT current_share_price FROM stock WHERE symbol = ? ";
         try{
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, symbol);
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, symbol.toUpperCase());
             if(results.next()) {
-                price = (BigDecimal) results;
+                price = results.getBigDecimal("current_share_price");
             }
         } catch (CannotGetJdbcConnectionException e){
             throw new DaoException( "cannot connect to server or database", e);
