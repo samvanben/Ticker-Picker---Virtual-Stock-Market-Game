@@ -16,5 +16,5 @@ public interface StockDao {
     int createStock(Stock stock);
     boolean updateStock(Stock updatedStock, int stockId);
     boolean deleteStock(int stockId);
-    BigDecimal getStockPriceByStockId(int stockId);
+    BigDecimal getStockPriceBySymbol(String symbol);
 }

@@ -86,7 +86,8 @@ const router = new Router({
       path: "/leaderboard/spec",
       name: "spec-leaderboard",
       component: SpecLeader,
-    },{
+    },
+    {
       path: "/new_game",
       name: "newGame",
       component: NewGame,
@@ -101,7 +102,6 @@ const router = new Router({
       meta: {
         requiresAuth: true
       }
-
     },
     {
       path:'/:pathMatch(.*)*',

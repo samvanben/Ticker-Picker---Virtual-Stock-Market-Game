@@ -3,7 +3,8 @@
       <div id="lobby-bin">
         <h2 id="lobby-head">The Trading Floor</h2>
         <div id="current-buttons">
-          <button id="new-game">+ New Game</button>
+          <router-link id="newGame-tag" v-bind:to="{name: 'newGame'}" v-if="$store.state.token != ''"><button id="newGame">+ New Game</button></router-link>
+
         </div>
         <table id="current-games">
           <tr>
@@ -20,7 +21,7 @@
             <td>12/12/2023</td>
             <td>1 / 10</td>
             <td>$88,000.00</td>
-            <td><button class="port-button">View Portfolio</button></td>
+            <td><router-link id="port-tag" v-bind:to="{name: 'portfolio'}" v-if="$store.state.token != ''"><button id="portfolio">View Portfolio</button></router-link></td>
           </tr>
           <tr class="row">
             <td>Game Two</td>
@@ -28,7 +29,7 @@
             <td>12/12/2023</td>
             <td>1 / 10</td>
             <td>$88,000.00</td>
-            <td><button class="port-button">View Portfolio</button></td>
+            <td><router-link id="port-tag" v-bind:to="{name: 'portfolio'}" v-if="$store.state.token != ''"><button id="portfolio">View Portfolio</button></router-link></td>
           </tr>
           <tr class="row">
             <td>Game Three</td>
