@@ -2,8 +2,12 @@ import axios from 'axios';
 
 export default {
 
-  getPuppies() {
+  getAllStocks() {
     return axios.get('/allStocks')
-  }
+  },
+
+  getSearchStock(symbol) {
+    return axios.get(`/api/stocks/${symbol}`)
+  },
 
 }

@@ -121,11 +121,11 @@ public class JdbcStockDao implements StockDao {
         }
         return stockId;
     }
-    public BigDecimal getStockPriceByStockId(int stockId){
+    public BigDecimal getStockPriceBySymbol(String symbol){
         BigDecimal price = BigDecimal.valueOf(0);
-        String sql = "Select current_share_price from Stock where stock_id = ?";
+        String sql = "Select current_share_price from Stock where symbol = ?";
         try{
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, stockId);
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, symbol);
             if(results.next()) {
                 price = (BigDecimal) results;
             }

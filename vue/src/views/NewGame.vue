@@ -4,11 +4,11 @@
           <h1>Create a New Game</h1>
           <div id="form-name-game">
               <label for="name-game">Name Game:</label>
-              <input type="text" id="game-name" />
+              <input v-model="newGame.nameOfGame" type="text" id="game-name" />
           </div>
           <div>
               <label for="end-date">Choose End Date</label>
-              <input type="date" id="end-date" />
+              <input v-model="newGame.endDate" type="date" id="end-date" />
           </div>
           <h4>Invite Players!</h4>
           <table id="invite-players">
@@ -32,14 +32,33 @@
                   <td button id="invite">Invite</td>
               </tr>
           </table>
-          <button id="create">Create Game</button>
+          <button v-on:click.prevent="createNewGame" id="create">Create Game</button>
       </form>
   </div>
 </template>
 
 <script scoped>
+import GameService from '../services/GameService';
+
 export default {
     name: "NewGame",
+    data() {
+      return {
+        newGame: {
+          nameOfGame: "",
+          ownerName: this.$store.state.user.username
+        } 
+      }
+    },
+    methods: {
+      createNewGame() {
+        GameService.createGame(this.newGame).then((response) => {
+          if(response.status == 201){
+            this.$router.push('/')
+          }
+        })
+      }
+    },
 }
 </script>
 

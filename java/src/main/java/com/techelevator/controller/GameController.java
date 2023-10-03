@@ -23,6 +23,7 @@ import java.util.Map;
 
 @Controller
 @RestController
+@CrossOrigin
 //@PreAuthorize("isAuthenticated()")
 @RequestMapping(path = "/api/games")
 public class GameController {
@@ -126,15 +127,15 @@ public class GameController {
         return gameDao.deleteGame(gameId)==0 ? false : true;
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(path = "/{gameId}/{userId}/buy/{stockId}}", method = RequestMethod.PUT)
-    public boolean buyStocksBalanceChange(@Valid @PathVariable int gameId, int userId, int stockId) {
-        BigDecimal amount = stockDao.getStockPriceByStockId(stockId);
+    @RequestMapping(path = "/{gameId}/{userId}/buy/{symbol}", method = RequestMethod.PUT)
+    public boolean buyStocksBalanceChange(@Valid @PathVariable int gameId, int userId, String symbol) {
+        BigDecimal amount = stockDao.getStockPriceBySymbol(symbol);
         return gameDao.subtractFromGameUserAvailableBalance(amount, gameId, userId);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(path = "/{gameId}/{userId}/sell/{stockId}}", method = RequestMethod.PUT)
-    public boolean sellStocksBalanceChange(@Valid @PathVariable int gameId, int userId, int stockId) {
-        BigDecimal amount = stockDao.getStockPriceByStockId(stockId);
+    @RequestMapping(path = "/{gameId}/{userId}/sell/{symbol}", method = RequestMethod.PUT)
+    public boolean sellStocksBalanceChange(@Valid @PathVariable int gameId, int userId, String symbol) {
+        BigDecimal amount = stockDao.getStockPriceBySymbol(symbol);
         return gameDao.addToGameUserAvailableBalance(amount, gameId, userId);
     }
 }
