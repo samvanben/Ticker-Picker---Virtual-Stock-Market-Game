@@ -2,6 +2,7 @@
   <div class="portfolio">
       <div id="portfolio-bin" class="portfolio-bin">
         <h2 id="bin-head">Portfolio</h2>
+        <h5>Input Number of Shares:</h5>
         <input v-model="numbers" type="number" id />
         <table id="portfolio-tab">
           <tr>
@@ -26,7 +27,7 @@
 
         <h3>Balance: ${{balance}}</h3>
 
-        <h3>Value: ${{value}}</h3>
+        <!-- <h3>Value: ${{value}}</h3> -->
 
     </div>
   </div>
@@ -105,6 +106,13 @@ export default {
   }
   .portfolio div h2 {
     color: white;
+  }
+  h3{
+    color: white;
+  }
+  h5{
+    color: white;
+    text-decoration: underline;
   }
   th {
     padding-left: 20px;

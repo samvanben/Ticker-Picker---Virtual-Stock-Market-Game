@@ -7,32 +7,33 @@
             <th>Game Name</th>
             <th>Game Start Date</th>
             <th>Game End Date</th>
-            <th>User Standing</th>
+            <!-- <th>User Standing</th> -->
             <th>Balance</th>
             <th>View Leaderboard</th>
           </tr>
-          <tr class="row">
-            <td>Game One</td>
-            <td>12/12/2023</td>
-            <td>12/12/2023</td>
-            <td>1 / 10</td>
-            <td>$88,000.00</td>
+          <tr class="row" v-for="game in games" v-bind:key="game.gameId">
+            <td>{{game.nameOfGame}}</td>
+            <td>{{game.startDate}}</td>
+            <td>{{game.endDate}}</td>
+            <!-- index of -->
+            <td>${{game.availableBalance}}</td>
+            <!-- <td>${{game.totalBalance}}</td> -->
             <td><router-link v-bind:to="{ name: 'spec-leaderboard' }" v-if="$store.state.token != ''"><button class="port-button">View Leaderboard</button></router-link></td>
           </tr>
           <tr class="row">
-            <td>Game Two</td>
-            <td>12/12/2023</td>
-            <td>12/12/2023</td>
-            <td>1 / 10</td>
-            <td>$88,000.00</td>
+            <td>The Tech of Wallstreet</td>
+            <td>09/26/2023</td>
+            <td>09/28/2023</td>
+            <!-- <td>1 / 10</td> -->
+            <td>$9,116.54</td>
             <td><router-link v-bind:to="{ name: 'spec-leaderboard' }" v-if="$store.state.token != ''"><button class="port-button">View Leaderboard</button></router-link></td>
           </tr>
           <tr class="row">
-            <td>Game Three</td>
-            <td>12/12/2023</td>
-            <td>12/12/2023</td>
-            <td>1 / 10</td>
-            <td>$88,000.00</td>
+            <td>Stock Madness</td>
+            <td>09/25/2023</td>
+            <td>10/02/2023</td>
+            <!-- <td>1 / 10</td> -->
+            <td>$94,671.25</td>
             <td><router-link v-bind:to="{ name: 'spec-leaderboard' }" v-if="$store.state.token != ''"><button class="port-button">View Leaderboard</button></router-link></td>
           </tr>
         </table>
@@ -41,8 +42,27 @@
 </template>
 
 <script>
+import GameService from '../services/GameService';
+
 export default {
     name: "GenLeader",
+    data() {
+      return {
+        games: [],
+        
+      }
+    },
+    methods: {
+      setGameId(gameId) {
+        console.log(gameId)
+        this.$store.commit('SET_GAME_ID', gameId)
+      }
+    },
+    created() {
+    GameService.getAllGames().then((response) => {
+      this.games = response.data;
+    })
+  }
 }
 </script>
 
@@ -108,6 +128,7 @@ td {
 }
 h2 {
     padding-top: 20px;
+    color: white;
 }
 
 </style>

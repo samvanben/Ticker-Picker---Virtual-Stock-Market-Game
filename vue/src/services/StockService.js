@@ -12,5 +12,9 @@ export default {
 
   getGameStockList() {
     return axios.get('/api/stocks/stock_list')
+  },
+
+  getTrendyStock() {
+    return axios.get('/api/stocks/trendy_stock')
   }
 }

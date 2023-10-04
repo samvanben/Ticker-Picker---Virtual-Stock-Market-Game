@@ -10,18 +10,18 @@
           </tr>
           <tr class="row">
             <td>1</td>    
-            <td>User 1</td>
-            <td>$88,000.00</td>
+            <td>Hagen</td>
+            <td>$88,946.20</td>
           </tr>
           <tr class="row">
             <td>2</td>  
-            <td>User 2</td>
-            <td>$88,000.00</td>
+            <td>Ellie</td>
+            <td>$58056.35</td>
           </tr>
           <tr class="row">
             <td>3</td>
-            <td>User 3</td>
-            <td>$88,000.00</td>
+            <td>Sam</td>
+            <td>$14,386.16</td>
           </tr>
         </table>
     </div>

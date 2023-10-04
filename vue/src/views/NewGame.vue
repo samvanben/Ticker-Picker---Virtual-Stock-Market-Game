@@ -20,10 +20,6 @@
                   <td button id="invite">Invite</td>
               </tr>
               <tr>
-                  <td>Ellie</td>
-                  <td button id="invite">Invite</td>
-              </tr>
-              <tr>
                   <td>Brian</td>
                   <td button id="invite">Invite</td>
               </tr>
@@ -54,7 +50,7 @@ export default {
       createNewGame() {
         GameService.createGame(this.newGame).then((response) => {
           if(response.status == 201){
-            this.$router.push('/')
+            this.$router.push('/lobby')
           }
         })
       }
