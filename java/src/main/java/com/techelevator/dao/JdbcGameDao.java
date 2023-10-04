@@ -19,7 +19,7 @@ import java.util.*;
 public class JdbcGameDao implements GameDao {
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    public JdbcGameDao(DataSource dataSource) {
+    public JdbcGameDao(DataSource dataSource, TransactionDao transactionDao) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
@@ -56,21 +56,6 @@ public class JdbcGameDao implements GameDao {
         return players;
     }
 
-    @Override
-    public List<GameUser> getPlayersByGameId(int gameId) {
-        List<GameUser> players = new ArrayList<>();
-        String sql = "SELECT * FROM game_user WHERE game_id = ? ";
-        try{
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
-            while(results.next()) {
-                GameUser gameUser = mapRowToGameUser(results);
-                players.add(gameUser);
-            }
-        } catch (CannotGetJdbcConnectionException e){
-            throw new DaoException( "cannot connect to server or database", e);
-        }
-        return players;
-    }
     @Override
     public BigDecimal getAvailableBalanceByUserGame(int userId, int gameId) {
         BigDecimal bigDecimal = new BigDecimal(0);
@@ -122,24 +107,6 @@ public class JdbcGameDao implements GameDao {
             throw new DaoException( "cannot connect to server or database", e);
         }
         return games;
-    }
-
-    private Game mapRowToGameAddBalance(SqlRowSet results) {
-        Game game = new Game();
-        game.setGameId((results.getInt("game_id")));
-        game.setNameOfGame(results.getString("name_of_game"));
-
-        if (results.getDate("game_start_date") != null) {
-            game.setStartDate(results.getDate("game_start_date").toLocalDate());
-        }
-        if (results.getDate("game_end_date") != null) {
-            game.setEndDate(results.getDate("game_end_date").toLocalDate());
-        }
-        game.setOwnerName(results.getString("owner_name"));
-        game.setAvailableBalance(results.getBigDecimal("available_balance"));
-        game.setTotalBalance(results.getBigDecimal("total_balance"));
-        game.setUserId(results.getInt("user_id"));
-        return game;
     }
 
     @Override
@@ -246,7 +213,7 @@ public class JdbcGameDao implements GameDao {
     }
 
     @Override
-    public boolean subtractFromGameUserTotalBalance(double amount, int gameId, int userId) {
+    public boolean subtractFromGameUserTotalBalance(BigDecimal amount, int gameId, int userId) {
         boolean success = false;
         String sql = "UPDATE game_user SET total_balance = total_balance - ? WHERE game_id=? AND user_id=?; ";
         try {
@@ -264,7 +231,7 @@ public class JdbcGameDao implements GameDao {
     }
 
     @Override
-    public boolean addToFromGameUserTotalBalance(double amount, int gameId, int userId) {
+    public boolean addToFromGameUserTotalBalance(BigDecimal amount, int gameId, int userId) {
         boolean success = false;
         String sql = "UPDATE game_user SET total_balance = total_balance + ? WHERE game_id=? AND user_id=?; ";
         try {
@@ -369,21 +336,75 @@ public class JdbcGameDao implements GameDao {
         return game;
     }
 
-    private User mapRowToUser(SqlRowSet results) {
-        User user = new User();
-        user.setId(results.getInt("user_id"));
-        user.setUsername(results.getString("username"));
-        user.setPassword(results.getString("password_hash"));
-        return user;
+    private Game mapRowToGameAddBalance(SqlRowSet results) {
+        Game game = new Game();
+        game.setGameId((results.getInt("game_id")));
+        game.setNameOfGame(results.getString("name_of_game"));
+
+        if (results.getDate("game_start_date") != null) {
+            game.setStartDate(results.getDate("game_start_date").toLocalDate());
+        }
+        if (results.getDate("game_end_date") != null) {
+            game.setEndDate(results.getDate("game_end_date").toLocalDate());
+        }
+        game.setOwnerName(results.getString("owner_name"));
+        game.setAvailableBalance(results.getBigDecimal("available_balance"));
+        game.setTotalBalance(results.getBigDecimal("total_balance"));
+        game.setUserId(results.getInt("user_id"));
+        return game;
     }
 
-    private GameUser mapRowToGameUser(SqlRowSet results) {
-        GameUser gameUser = new GameUser();
-        gameUser.setGameUserId((results.getInt("game_user_id")));
-        gameUser.setGameId((results.getInt("game_id")));
-        gameUser.setUserId((results.getInt("user_id")));
-        gameUser.setAvailableBalance((results.getBigDecimal("available_balance")));
-        gameUser.setTotalBalance((results.getBigDecimal("total_balance")));
-        return gameUser;
+    public boolean setGameStatusToFalse(int gameId){
+        int numberOfRow = 0;
+        String sql = "UPDATE game SET is_current_game = false WHERE game_id = ?;";
+        try{
+            numberOfRow = jdbcTemplate.update(sql, gameId);
+            if(numberOfRow == 0){
+                throw new DaoException("No rows affected");
+            }
+            return numberOfRow==0 ? false : true;
+        }catch(CannotGetJdbcConnectionException e){
+            throw new DaoException("No access");
+        }catch(DataIntegrityViolationException e){
+            throw new DaoException("data integrity violation");
+        }
+    }
+
+    @Override
+    public List<Game> getActiveGamesByUserId(int userId) {
+        List<Game> games = new ArrayList<>();
+        String sql = "SELECT game_user.game_id, name_of_game, game_start_date, game_end_date, owner_name, is_current_game, " +
+                "game_user.available_balance, game_user.total_balance, game_user.user_id FROM game " +
+                "JOIN game_user ON game_user.game_id = game.game_id " +
+                "WHERE game_user.game_id in (SELECT game_id FROM game_user WHERE user_id = ?) AND game_user.user_id = ? AND is_current_game = true; ";
+        try{
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId, userId);
+            while (results.next()) {
+                Game game = mapRowToGameAddBalance(results);
+                games.add(game);
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return games;
+    }
+
+    @Override
+    public List<Game> getEndedGamesByUserId(int userId) {
+        List<Game> games = new ArrayList<>();
+        String sql = "SELECT game_user.game_id, name_of_game, game_start_date, game_end_date, owner_name, is_current_game, " +
+                "game_user.available_balance, game_user.total_balance, game_user.user_id FROM game " +
+                "JOIN game_user ON game_user.game_id = game.game_id " +
+                "WHERE game_user.game_id in (SELECT game_id FROM game_user WHERE user_id = ?) AND game_user.user_id = ? AND is_current_game = false; ";
+        try{
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId, userId);
+            while (results.next()) {
+                Game game = mapRowToGameAddBalance(results);
+                games.add(game);
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return games;
     }
 }
