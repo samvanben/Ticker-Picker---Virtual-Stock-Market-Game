@@ -96,7 +96,7 @@ const router = new Router({
       }
     },
     {
-      path: "/portfolio",
+      path: "/portfolio:id",
       name: "portfolio",
       component: Portfolio,
       meta: {

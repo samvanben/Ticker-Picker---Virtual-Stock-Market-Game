@@ -2,64 +2,75 @@
   <div class="portfolio">
       <div id="portfolio-bin" class="portfolio-bin">
         <h2 id="bin-head">Portfolio</h2>
+        <input v-model="numbers" type="number" id />
         <table id="portfolio-tab">
           <tr>
             <th>Ticker Symbol</th>
             <th>Price</th>
             <th>Exchange</th>
-            <th>Shares</th>
+            <!-- <th>Number of Shares</th> -->
+            
             <th>Buy</th>
             <th>Sell</th>
           </tr>
-          <tr>
-            <td>$TSLA</td>
-            <td>$246.38</td>
-            <td>NASDAQ</td>
-            <input type="number" id />
-            <td button id="buy">+</td>
-            <td button id="sell">-</td>
-          </tr>
-          <tr>
-            <td>$AAPL</td>
-            <td>$174.10</td>
-            <td>NASDAQ</td>
-            <input type="number" id />
-            <td button id="buy">+</td>
-            <td button id="sell">-</td>
-          </tr>
-          <tr>
-            <td>$GOOGL</td>
-            <td>$132.31</td>
-            <td>NASDAQ</td>
-            <input type="number" id />
-            <td button id="buy">+</td>
-            <td button id="sell">-</td>
-          </tr>
-          <tr>
-            <td>$JPM</td>
-            <td>$147.59</td>
-            <td>NYSE</td>
-            <input type="number" id />
-            <td button id="buy">+</td>
-            <td button id="sell">-</td>
-          </tr>
-          <tr>
-            <td>$MSFT</td>
-            <td>$313.64</td>
-            <td>NASDAQ</td>
-            <input type="number" id />
-            <td button id="buy">+</td>
-            <td button id="sell">-</td>
+          <tr v-for="stock in stockList" v-bind:key="stock.stockId">
+            <td>${{stock.symbol}}</td>
+            <td>${{stock.close}}</td>
+            <td>{{stock.exchange}}</td>
+            <!-- <td>0</td> -->
+             
+            <td v-on:click.prevent="buyStocks(stock.symbol, stock)" button id="buy">+</td>
+            <td v-on:click.prevent="sellStocks(stock.symbol, stock)" button id="sell">-</td>
           </tr>
         </table>
+
+        <h3>Balance: ${{balance}}</h3>
+
+        <h3>Value: ${{value}}</h3>
 
     </div>
   </div>
 </template>
 
 <script>
-export default {
+import BalanceService from '../services/BalanceService';
+import StockService from '../services/StockService';
 
+export default {
+  name: 'balance',
+  data() {
+    return {
+      balance: 0,
+      value: 0,
+      stockList: [],
+      numbers: 0
+    };
+  },
+
+  methods: {
+    buyStocks(symbol, stock) {
+      BalanceService.buyStock(this.$route.params.id, symbol, this.numbers, stock).then((response) => {
+        this.balance = response.data;
+      })
+    },
+    sellStocks(symbol, stock) {
+      BalanceService.sellStock(this.$route.params.id, symbol, this.numbers, stock).then((response) => {
+        this.balance = response.data;
+      })
+    }
+  },
+
+  created() {
+    BalanceService.getBalance(this.$route.params.id).then((response) => {
+      this.balance = response.data;
+    }),
+    BalanceService.getValue(this.$route.params.id).then((response) => {
+      this.value = response.data;
+    }),
+    StockService.getGameStockList().then((response) => {
+      this.stockList = response.data;
+    })
+  }
 }
 </script>
 

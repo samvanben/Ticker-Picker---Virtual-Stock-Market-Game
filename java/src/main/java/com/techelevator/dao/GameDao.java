@@ -15,10 +15,9 @@ public interface GameDao {
     BigDecimal getGameUserTotalBalance(int gameId, int userId);
     boolean subtractFromGameUserAvailableBalance(BigDecimal amount, int gameId, int userId);
     boolean addToGameUserAvailableBalance(BigDecimal amount, int gameId, int userId);
-    boolean subtractFromGameUserTotalBalance(double amount, int gameId, int userId);
-    boolean addToFromGameUserTotalBalance(double amount, int gameId, int userId);
+    boolean subtractFromGameUserTotalBalance(BigDecimal amount, int gameId, int userId);
+    boolean addToFromGameUserTotalBalance(BigDecimal amount, int gameId, int userId);
     boolean addPlayerToGame(List<User> users, int gameId);
-    List<GameUser> getPlayersByGameId(int gameId);
     Map<String, BigDecimal> orderGameMembersByTotalBalanceByGameId(int gameId);
     List<Game> getGamesByUserId(int userId);
     Game getGameByGameId(int gameId);
@@ -27,4 +26,8 @@ public interface GameDao {
     int createGame(Game game);
     Game updateGame(Game updatedGame, int gameId);
     int deleteGame(int gameId);
+
+    boolean setGameStatusToFalse(int gameId);
+    List<Game> getActiveGamesByUserId(int userId);
+    public List<Game> getEndedGamesByUserId(int userId);
 }

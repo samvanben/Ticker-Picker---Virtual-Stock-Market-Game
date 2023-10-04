@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -49,20 +50,6 @@ public class StockController {
         return stockDao.getAllStocks();
     }
 
-//    @RequestMapping(path = "/{stockId}", method = RequestMethod.GET)
-//    public Stock getStockBySymbol(@PathVariable int stockId){
-//        return stockDao.getStockByStockId(stockId);
-//    }
-
-    // TODO not working due to getStocksByOneUser() method bad sql query
-    @RequestMapping(path = "/list-my-stocks", method = RequestMethod.GET)
-    public List<Stock> getCurrentLoggedInUserAllStocks(Principal user){
-        String username = user.getName();
-        int userId = userDao.findIdByUsername(username);
-
-        return stockDao.getStocksByOneUser(userId);
-    }
-
     @RequestMapping(path = "/{gameId}/list-my-stocks", method = RequestMethod.GET)
     public List<Stock> getCurrentLoggedInUserGameStocksByGameId(Principal user, @PathVariable int gameId){
         String username = user.getName();
@@ -93,28 +80,7 @@ public class StockController {
         stockDao.createStock(stock);
         return true;
     }
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @RequestMapping(path = "", method = RequestMethod.POST)
-//    public boolean create(@Valid @RequestBody Stock stock) {
-//        gameDao.createGame()
-//        return true;
-//    }
 
-    @RequestMapping(path = "/{stockSymbol}", method = RequestMethod.PUT)
-    public boolean update(@Valid @RequestBody Stock stockToUpdate, @PathVariable int stockId) {
-        stockToUpdate.setStockId(stockId);
-        try {
-            return stockDao.updateStock(stockToUpdate, stockId);
-        } catch (DaoException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Stock Not Found");
-        }
-    }
-
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(path = "/{stockSymbol}", method = RequestMethod.DELETE)
-    public boolean delete(@Valid @PathVariable int stockId) {
-        return stockDao.deleteStock(stockId);
-    }
     private StocksApi stocksApi = new StocksApi();
 
     @GetMapping(path = "/{symbol}")

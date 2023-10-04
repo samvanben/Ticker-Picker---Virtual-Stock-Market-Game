@@ -10,4 +10,7 @@ export default {
     return axios.get(`/api/stocks/${symbol}`)
   },
 
+  getGameStockList() {
+    return axios.get('/api/stocks/stock_list')
+  }
 }
