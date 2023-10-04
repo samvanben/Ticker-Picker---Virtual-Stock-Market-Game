@@ -141,18 +141,20 @@ public class GameController {
     }
 
     @RequestMapping(path = "{gameId}/buy/{symbol}/{numbers}", method = RequestMethod.PUT)
-    public boolean buyStock(@PathVariable String symbol, @PathVariable int gameId, @PathVariable int numbers, Principal user) {
+    public boolean buyStock(@PathVariable String symbol, @PathVariable int gameId, @PathVariable int numbers, Principal user, @RequestBody StockApiDTO stock) {
         // get current user's user id
         String username = user.getName();
         int userId = userDao.findIdByUsername(username);
 
-        BigDecimal stockPrice = stockDao.getStockPriceBySymbol(symbol);
+        // get price of the stock
+        BigDecimal stockPrice = BigDecimal.valueOf(stock.getClose());
         // get transaction amount and commission to check if available balance can cover the transaction
         BigDecimal transactionAmount = stockPrice.multiply(BigDecimal.valueOf(numbers));
-        BigDecimal commission = BigDecimal.valueOf(19.95);
-        BigDecimal totalAmount = transactionAmount.add(commission);
+        // optional add commission to the transaction
+//        BigDecimal commission = BigDecimal.valueOf(19.95);
+//        BigDecimal totalAmount = transactionAmount.add(commission);
         // if available balance can cover the transaction, proceed to buy
-        if(totalAmount.compareTo(gameDao.getAvailableBalanceByUserGame(userId, gameId))<=0){
+        if(transactionAmount.compareTo(gameDao.getAvailableBalanceByUserGame(userId, gameId))<=0){
             // implement logic of shares of stocks holding
             if(transactionDao.getStockQuantity(userId, gameId, symbol)==-1){
                 transactionDao.createTransactionForStock(numbers, userId, gameId, symbol);
@@ -160,27 +162,44 @@ public class GameController {
                 int numbersOfSharesHolding = transactionDao.getStockQuantity(userId, gameId, symbol) + numbers;
                 transactionDao.updateTransactionForStock(numbersOfSharesHolding, userId, gameId, symbol);
             }
-            return gameDao.subtractFromGameUserAvailableBalance(totalAmount, gameId, userId);
+            return gameDao.subtractFromGameUserAvailableBalance(transactionAmount, gameId, userId);
         } else {
             new IOException("Insufficient Fund");
         }
-
         return false;
     }
 
     @RequestMapping(path = "{gameId}/sell/{symbol}/{numbers}", method = RequestMethod.PUT)
-    public boolean sellStock(@PathVariable String symbol, @PathVariable int gameId, @PathVariable int numbers, Principal user) {
+    public boolean sellStock(@PathVariable String symbol, @PathVariable int gameId, @PathVariable int numbers, Principal user, @RequestBody StockApiDTO stock) {
         // get current user's user id
         String username = user.getName();
         int userId = userDao.findIdByUsername(username);
 
         if(numbers <= transactionDao.getStockQuantity(userId, gameId, symbol)){
-            BigDecimal stockPrice = stockDao.getStockPriceBySymbol(symbol);
+            BigDecimal stockPrice = BigDecimal.valueOf(stock.getClose());
             // get transaction amount and commission, proceed to sell
             BigDecimal transactionAmount = stockPrice.multiply(BigDecimal.valueOf(numbers));
-            BigDecimal commission = BigDecimal.valueOf(19.95);
-            BigDecimal totalAmount = transactionAmount.subtract(commission);
-            gameDao.addToGameUserAvailableBalance(totalAmount, gameId, userId);
+//            BigDecimal commission = BigDecimal.valueOf(19.95);
+//            BigDecimal totalAmount = transactionAmount.subtract(commission);
+            gameDao.addToGameUserAvailableBalance(transactionAmount, gameId, userId);
+
+            // implement logic of shares of stocks holding
+            int numbersOfSharesHolding = transactionDao.getStockQuantity(userId, gameId, symbol) - numbers;
+            return transactionDao.updateTransactionForStock(numbersOfSharesHolding, userId, gameId, symbol);
+        } else {
+            new IOException("You don't have sufficient shares of stocks to sell");
+        }
+        return false;
+    }
+
+    private boolean sellStock(@PathVariable String symbol, @PathVariable int gameId, @PathVariable int numbers, int userId, @RequestBody StockApiDTO stock) {
+        if(numbers <= transactionDao.getStockQuantity(userId, gameId, symbol)){
+            BigDecimal stockPrice = BigDecimal.valueOf(stock.getClose());
+            // get transaction amount and commission, proceed to sell
+            BigDecimal transactionAmount = stockPrice.multiply(BigDecimal.valueOf(numbers));
+//            BigDecimal commission = BigDecimal.valueOf(19.95);
+//            BigDecimal totalAmount = transactionAmount.subtract(commission);
+            gameDao.addToGameUserAvailableBalance(transactionAmount, gameId, userId);
 
             // implement logic of shares of stocks holding
             int numbersOfSharesHolding = transactionDao.getStockQuantity(userId, gameId, symbol) - numbers;
@@ -199,7 +218,7 @@ public class GameController {
     }
 
     @RequestMapping(path = "/{gameId}/end-game", method = RequestMethod.GET)
-    public boolean endGame(@PathVariable int gameId){
+    public boolean endGame(@PathVariable int gameId, @RequestBody StockApiDTO stock){
         // get list of game player's userId
         List<GameUser> players = gameUserDao.getPlayerByGameId(gameId);
         List<Integer> listOfUserId = new ArrayList<>();
@@ -210,7 +229,7 @@ public class GameController {
         for(Integer currentUserId: listOfUserId){
             Map<String, Integer> holdings = transactionDao.listActiveStocks(currentUserId, gameId);
             for(Map.Entry<String, Integer> entry: holdings.entrySet()){
-                sellStock(entry.getKey(), gameId, entry.getValue(), currentUserId);
+                sellStock(entry.getKey(), gameId, entry.getValue(), currentUserId, stock);
             }
         }
         // check if there are any holding shares for all users, return true if no, false if yes
@@ -223,23 +242,5 @@ public class GameController {
         }
         gameDao.setGameStatusToFalse(gameId);
         return done;
-    }
-
-    private boolean sellStock(@PathVariable String symbol, @PathVariable int gameId, @PathVariable int numbers, int userId) {
-        if(numbers <= transactionDao.getStockQuantity(userId, gameId, symbol)){
-            BigDecimal stockPrice = stockDao.getStockPriceBySymbol(symbol);
-            // get transaction amount and commission, proceed to sell
-            BigDecimal transactionAmount = stockPrice.multiply(BigDecimal.valueOf(numbers));
-            BigDecimal commission = BigDecimal.valueOf(19.95);
-            BigDecimal totalAmount = transactionAmount.subtract(commission);
-            gameDao.addToGameUserAvailableBalance(totalAmount, gameId, userId);
-
-            // implement logic of shares of stocks holding
-            int numbersOfSharesHolding = transactionDao.getStockQuantity(userId, gameId, symbol) - numbers;
-            return transactionDao.updateTransactionForStock(numbersOfSharesHolding, userId, gameId, symbol);
-        } else {
-            new IOException("You don't have sufficient shares of stocks to sell");
-        }
-        return false;
     }
 }
