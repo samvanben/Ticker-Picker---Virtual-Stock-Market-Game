@@ -11,6 +11,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,5 +128,19 @@ public class JdbcStockDao implements StockDao {
         stock.setStockId(results.getInt("stock_id"));
         stock.setSymbol(results.getString("symbol"));
         return stock;
+    }
+
+    public BigDecimal getStockPriceBySymbol(String symbol) {
+        BigDecimal price = new BigDecimal(0);
+        String sql = "SELECT current_share_price FROM stock WHERE symbol = ? ";
+        try{
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, symbol.toUpperCase());
+            if(results.next()) {
+                price = results.getBigDecimal("current_share_price");
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return price;
     }
 }

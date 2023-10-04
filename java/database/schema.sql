@@ -34,19 +34,21 @@ CREATE TABLE game (
 	CONSTRAINT FK_game_owner FOREIGN KEY (owner_name) REFERENCES users (username)
 );
 
+-- change 1
 CREATE TABLE transaction (
 	transaction_id SERIAL,
-	transaction_type varchar(10) NOT NULL,
-	price numeric DEFAULT 0 NOT NULL,
-	number_of_shares integer DEFAULT 0 NOT NULL,
-	transaction_amount numeric,
+--	transaction_type varchar(10) NOT NULL,
+--	price numeric DEFAULT 0 NOT NULL,
+--	number_of_shares integer DEFAULT 0 NOT NULL,
+--	transaction_amount numeric,
 	user_id integer NOT NULL,
-	stock_id integer NOT NULL,
+	stock_symbol varchar(50) NOT NULL,
 	game_id integer NOT NULL,
-	CONSTRAINT CHK_transaction_type CHECK (transaction_type in ('buy', 'sell')),
+	quantity int NOT NULL,
+--	CONSTRAINT CHK_transaction_type CHECK (transaction_type in ('buy', 'sell')),
 	CONSTRAINT PK_transaction PRIMARY KEY (transaction_id),
 	CONSTRAINT FK_transaction_user FOREIGN KEY (user_id) REFERENCES users (user_id),
-	CONSTRAINT FK_transaction_stock FOREIGN KEY (stock_id) REFERENCES stock (stock_id),
+--	CONSTRAINT FK_transaction_stock FOREIGN KEY (stock_symbol) REFERENCES stock (symbol),
 	CONSTRAINT FK_transaction_game FOREIGN KEY (game_id) REFERENCES game (game_id)
 );
 

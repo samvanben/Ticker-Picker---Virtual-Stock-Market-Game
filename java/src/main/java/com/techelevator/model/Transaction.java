@@ -5,40 +5,41 @@ import java.math.BigDecimal;
 
 public class Transaction {
     private int transactionId;
-    @NotEmpty(message = "Please enter stock")
-    private int stockId;
-    @NotEmpty(message = "Please enter game")
+    private String symbol;
     private int gameId;
-    @NotEmpty(message = "Please enter user")
     private int userId;
-    @NotEmpty(message = "Please enter price")
     private BigDecimal price;
-    @NotEmpty(message = "Please enter transaction type")
-    private String transactionType;
-    @NotEmpty(message = "Please enter number of shares for execution")
-    private int numberOfShares;
+//    @NotEmpty(message = "Please enter transaction type")
+//    private String transactionType;
+//    private int numberOfShares;
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    private int quantity = 0;
 
     public Transaction() {
-
     }
 
-    public Transaction(int transactionId, int stockId, int gameId, int userId, BigDecimal price, String transactionType, int numberOfShares) {
+    public Transaction(int transactionId, String symbol, int gameId, int userId, BigDecimal price) {
         this.transactionId = transactionId;
-        this.stockId = stockId;
+        this.symbol = symbol;
         this.gameId = gameId;
         this.userId = userId;
         this.price = price;
-        this.transactionType = transactionType;
-        this.numberOfShares = numberOfShares;
+
     }
 
-    public Transaction(int stockId, int gameId, int userId, BigDecimal price, String transactionType, int numberOfShares) {
-        this.stockId = stockId;
+    public Transaction(String symbol, int gameId, int userId, BigDecimal price) {
+        this.symbol = symbol;
         this.gameId = gameId;
         this.userId = userId;
         this.price = price;
-        this.transactionType = transactionType;
-        this.numberOfShares = numberOfShares;
     }
 
     public int getTransactionId() {
@@ -49,12 +50,12 @@ public class Transaction {
         this.transactionId = transactionId;
     }
 
-    public int getStockId() {
-        return stockId;
+    public String getSymbol() {
+        return symbol;
     }
 
-    public void setStockId(int stockId) {
-        this.stockId = stockId;
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 
     public int getGameId() {
@@ -81,32 +82,13 @@ public class Transaction {
         this.price = price;
     }
 
-    public String getTransactionType() {
-        return transactionType;
-    }
-
-    public void setTransactionType(String transactionType) {
-        this.transactionType = transactionType;
-    }
-
-    public int getNumberOfShares() {
-        return numberOfShares;
-    }
-
-    public void setNumberOfShares(int numberOfShares) {
-        this.numberOfShares = numberOfShares;
-    }
-
     @Override
     public String toString() {
         return "Transaction{" +
                 "transactionId=" + transactionId +
-                ", stockId=" + stockId +
                 ", gameId=" + gameId +
                 ", userId=" + userId +
                 ", price=" + price +
-                ", transactionType='" + transactionType + '\'' +
-                ", numberOfShares=" + numberOfShares +
                 '}';
     }
 }

@@ -5,6 +5,7 @@ import com.techelevator.model.Transaction;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public interface TransactionDao {
     List<Transaction> getAllTransactionsAsAdmin();
@@ -14,7 +15,14 @@ public interface TransactionDao {
     List<Transaction> getTransactionsByUsername(String username);
     List<Transaction> getTransactionsByUsernameGame(String username, int gameId);
 
-    int createTransaction(Transaction transactionToCreate);
-    boolean updateTransaction(Transaction transactionToUpdate, int transactionId);
+    // change 4 below four methods
+    boolean createTransactionForStock(int quantity,  int userId, int gameId, String symbol);
+    boolean updateTransactionForStock(int quantity,  int userId, int gameId, String symbol);
+    int getStockQuantity(int userId, int gameId, String symbol);
+    Map<String, Integer> listActiveStocks(int userId, int gameId);
+
+
+//    int createTransaction(Transaction transactionToCreate);
+//    boolean updateTransaction(Transaction transactionToUpdate, int transactionId);
     boolean deleteTransaction(int transactionId);
 }

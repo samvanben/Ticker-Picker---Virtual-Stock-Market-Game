@@ -10,8 +10,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
+import javax.print.DocFlavor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class JdbcTransactionDao implements TransactionDao {
@@ -111,40 +114,40 @@ public class JdbcTransactionDao implements TransactionDao {
         return results;
     }
 
-    @Override
-    public int createTransaction(Transaction transactionToCreate) {
-        int transactionId = 0;
-        String sql = "INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES (?, ?, ?, ?, ?, ?) returning ; ";
-        try {
-            transactionId = jdbcTemplate.queryForObject(sql, int.class, transactionToCreate.getTransactionType(), transactionToCreate.getPrice(), transactionToCreate.getNumberOfShares(),
-                    transactionToCreate.getUserId(), transactionToCreate.getStockId(), transactionToCreate.getGameId());
-            transactionToCreate.setTransactionId(transactionId);
-        } catch (CannotGetJdbcConnectionException e){
-            throw new DaoException( "cannot connect to server or database", e);
-        } catch (DataIntegrityViolationException e){
-            throw new DaoException("data integrity violation", e);
-        }
-        return transactionId;
-    }
-
-    @Override
-    public boolean updateTransaction(Transaction transactionToUpdate, int transactionId) {
-        boolean success = false;
-        String sql = "UPDATE transaction SET transaction_type=?, price=?, number_of_shares=?, user_id=?, stock_id=?, game_id=? WHERE transaction_id=?;";
-        try {
-            int numberOfRows = jdbcTemplate.update(sql, transactionToUpdate.getTransactionType(), transactionToUpdate.getPrice(), transactionToUpdate.getNumberOfShares(),
-                    transactionToUpdate.getUserId(), transactionToUpdate.getStockId(), transactionToUpdate.getGameId(), transactionId);
-            if (numberOfRows == 0 ){
-                throw new DaoException("Zero rows affected, expected at least one");
-            }
-            success = true;
-        } catch (CannotGetJdbcConnectionException e){
-            throw new DaoException( "cannot connect to server or database", e);
-        } catch (DataIntegrityViolationException e){
-            throw new DaoException("data integrity violation", e);
-        }
-        return success;
-    }
+//    @Override
+//    public int createTransaction(Transaction transactionToCreate) {
+//        int transactionId = 0;
+//        String sql = "INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES (?, ?, ?, ?, ?, ?) returning ; ";
+//        try {
+//            transactionId = jdbcTemplate.queryForObject(sql, int.class, transactionToCreate.getTransactionType(), transactionToCreate.getPrice(), transactionToCreate.getNumberOfShares(),
+//                    transactionToCreate.getUserId(), transactionToCreate.getStockId(), transactionToCreate.getGameId());
+//            transactionToCreate.setTransactionId(transactionId);
+//        } catch (CannotGetJdbcConnectionException e){
+//            throw new DaoException( "cannot connect to server or database", e);
+//        } catch (DataIntegrityViolationException e){
+//            throw new DaoException("data integrity violation", e);
+//        }
+//        return transactionId;
+//    }
+//
+//    @Override
+//    public boolean updateTransaction(Transaction transactionToUpdate, int transactionId) {
+//        boolean success = false;
+//        String sql = "UPDATE transaction SET transaction_type=?, price=?, number_of_shares=?, user_id=?, stock_id=?, game_id=? WHERE transaction_id=?;";
+//        try {
+//            int numberOfRows = jdbcTemplate.update(sql, transactionToUpdate.getTransactionType(), transactionToUpdate.getPrice(), transactionToUpdate.getNumberOfShares(),
+//                    transactionToUpdate.getUserId(), transactionToUpdate.getStockId(), transactionToUpdate.getGameId(), transactionId);
+//            if (numberOfRows == 0 ){
+//                throw new DaoException("Zero rows affected, expected at least one");
+//            }
+//            success = true;
+//        } catch (CannotGetJdbcConnectionException e){
+//            throw new DaoException( "cannot connect to server or database", e);
+//        } catch (DataIntegrityViolationException e){
+//            throw new DaoException("data integrity violation", e);
+//        }
+//        return success;
+//    }
 
     @Override
     public boolean deleteTransaction(int transactionId) {
@@ -167,12 +170,74 @@ public class JdbcTransactionDao implements TransactionDao {
     private Transaction mapRowToTransaction(SqlRowSet results) {
         Transaction transaction = new Transaction();
         transaction.setTransactionId(results.getInt("transaction_id"));
-        transaction.setTransactionType(results.getString("transaction_type"));
-        transaction.setPrice(results.getBigDecimal("price"));
-        transaction.setNumberOfShares(results.getInt("number_of_shares"));
         transaction.setUserId(results.getInt("user_id"));
-        transaction.setStockId(results.getInt("stock_id"));
+        transaction.setSymbol(results.getString("stock_symbol"));
         transaction.setGameId(results.getInt("game_id"));
+        transaction.setQuantity(results.getInt("quantity"));
         return transaction;
+    }
+
+    // change 3 below all
+    @Override
+    public boolean createTransactionForStock(int quantity,  int userId, int gameId, String symbol){
+        int transactionId = 0;
+        String createTransactionSql = "INSERT INTO transaction (user_id, stock_symbol, game_id, quantity) VALUES (?, ?, ?, ?) returning transaction_id; ";
+
+        try{
+            transactionId = jdbcTemplate.queryForObject(createTransactionSql, int.class, userId, symbol, gameId, quantity);
+            return transactionId == 0 ? false : true;
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        } catch (DataIntegrityViolationException e){
+            throw new DaoException("data integrity violation", e);
+        }
+    }
+
+    @Override
+    public boolean updateTransactionForStock(int quantity,  int userId, int gameId, String symbol) {
+        String updateTransactionQuantitySql = "UPDATE transaction SET quantity = ? WHERE user_id=? AND game_id=? AND stock_symbol=?; ";
+        try {
+            int numberOfRows = jdbcTemplate.update(updateTransactionQuantitySql, quantity, userId, gameId, symbol);
+            if (numberOfRows == 0 ){
+                throw new DaoException("Zero rows affected, expected at least one");
+            }
+            return numberOfRows==0 ? false : true;
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        } catch (DataIntegrityViolationException e){
+            throw new DaoException("data integrity violation", e);
+        }
+    }
+
+    @Override
+    public int getStockQuantity(int userId, int gameId, String symbol) {
+        int quantity = -1;
+        String getQuantitySql = "SELECT quantity FROM transaction WHERE user_id=? AND game_id=? AND stock_symbol=?; ";
+        try{
+            SqlRowSet results = jdbcTemplate.queryForRowSet(getQuantitySql, userId, gameId, symbol);
+            if (results.next()){
+                quantity = results.getInt("quantity");
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return quantity;
+    }
+
+    @Override
+    public Map<String, Integer> listActiveStocks(int userId, int gameId) {
+        Map<String, Integer> activeStocks = new HashMap<>();
+        String sql = "SELECT * FROM transaction WHERE user_id=? AND game_id=? AND quantity>0; ";
+        try{
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId, gameId);
+            while (results.next()){
+                String symbol = results.getString("stock_symbol");
+                int share = results.getInt("quantity");
+                activeStocks.put(symbol, share);
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return activeStocks;
     }
 }
