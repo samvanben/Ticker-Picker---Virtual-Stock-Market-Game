@@ -19,4 +19,5 @@ public interface TransactionDao {
     int getStockQuantity(int userId, int gameId, String symbol);
     Map<String, Integer> listActiveStocks(int userId, int gameId);
     boolean deleteTransaction(int transactionId);
+    List<Transaction> listAllStocks(int userId, int gameId);
 }

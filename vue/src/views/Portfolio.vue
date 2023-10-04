@@ -9,16 +9,17 @@
             <th>Ticker Symbol</th>
             <th>Price</th>
             <th>Exchange</th>
-            <!-- <th>Number of Shares</th> -->
+            <th>Number of Shares</th>
             
             <th>Buy</th>
             <th>Sell</th>
           </tr>
-          <tr v-for="stock in stockList" v-bind:key="stock.stockId">
+          <tr v-for="(stock, index) in stockList" v-bind:key="index">
             <td>${{stock.symbol}}</td>
             <td>${{stock.close}}</td>
             <td>{{stock.exchange}}</td>
-            <!-- <td>0</td> -->
+            <td>{{sharesTest(index)}}</td>
+            <!-- <td>{{sharesList[index]}}</td> -->
              
             <td v-on:click.prevent="buyStocks(stock.symbol, stock)" button id="buy">+</td>
             <td v-on:click.prevent="sellStocks(stock.symbol, stock)" button id="sell">-</td>
@@ -44,21 +45,81 @@ export default {
       balance: 0,
       value: 0,
       stockList: [],
-      numbers: 0
+      numbers: 0,
+      sharesList: [],
+      test: []
     };
   },
 
   methods: {
     buyStocks(symbol, stock) {
       BalanceService.buyStock(this.$route.params.id, symbol, this.numbers, stock).then((response) => {
-        this.balance = response.data;
+        if(response.data == true){
+          this.balance = BalanceService.getBalance(this.$route.params.id).then((response) => {
+            this.balance = response.data;
+          })
+        }
       })
+      let currentShares = this.sharesList.find((share) => {
+        if(share.symbol.toUpperCase() === symbol) {
+          share.quantity = parseInt(share.quantity) + parseInt(this.numbers);
+        }
+      })
+      console.log(currentShares)
     },
     sellStocks(symbol, stock) {
       BalanceService.sellStock(this.$route.params.id, symbol, this.numbers, stock).then((response) => {
-        this.balance = response.data;
+        if(response.data == true){
+          this.balance = BalanceService.getBalance(this.$route.params.id).then((response) => {
+            this.balance = response.data;
+          })
+        }
       })
-    }
+      let currentShares = this.sharesList.find((share) => {
+        if(share.symbol.toUpperCase() === symbol) {
+          share.quantity -= parseInt(this.numbers);
+        }
+      })
+      console.log(currentShares)
+      // currentShares.quantity -= this.numbers;
+    },
+    getShares(symbol) {
+      StockService.getShare(this.$route.params.id, symbol).then((response) => {
+        console.log(response)
+        this.sharesList.push(response.data);
+      })
+    },
+    shares(symbol) {
+        return this.sharesList.forEach((share) => {
+          console.log(share)
+          if(share.symbol.toUpperCase() === symbol.toUpperCase()) {
+            console.log(share.quantity);
+            return share.quantity;
+          }
+        })
+      },
+
+    sharesTest(index) {
+      console.log(index)
+      // this.stockList.forEach((stock) => {
+      //   this.sharesList.forEach((share) => {
+      //     if(share.symbol.toUpperCase() === stock.symbol.toUpperCase()) {
+      //       this.test.push(share.quantity)
+      //     }
+      //   })
+      // })
+      let currentShares = this.sharesList.find((share) => {
+        if(share.symbol.toUpperCase() === index) {
+          return share;
+        }
+      })
+      if(currentShares === undefined){
+        return 0;
+      }
+      console.log(currentShares)
+      return currentShares.quantity
+      }
+    
   },
 
   created() {
@@ -70,8 +131,25 @@ export default {
     }),
     StockService.getGameStockList().then((response) => {
       this.stockList = response.data;
+    }),
+    StockService.getAllShares(this.$route.params.id).then((response) => {
+      this.sharesList = response.data;
     })
+    // function(){
+    //   for(let stock of this.stockList) {
+    //     this.shareList.push(this.getShares(stock.symbol))
+    //   }
+    // }
   }
+
+  // computed: { shares(symbol) {
+  //     console.log(symbol)
+  //       return this.sharesList.forEach((share) => {
+  //         if(share.symbol.toUpperCase() === symbol.toUpperCase()) {
+  //           return share.quantity
+  //         }
+  //       })
+  //     }}
 }
 </script>
 

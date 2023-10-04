@@ -23,6 +23,7 @@ import java.util.List;
 @RestController
 @PreAuthorize("isAuthenticated()")
 @RequestMapping(path = "/api/transactions")
+@CrossOrigin
 public class TransactionController {
     private UserDao userDao;
     private GameDao gameDao;

@@ -20,22 +20,6 @@
             <!-- <td>${{game.totalBalance}}</td> -->
             <td><router-link v-bind:to="{ name: 'spec-leaderboard' }" v-if="$store.state.token != ''"><button class="port-button">View Leaderboard</button></router-link></td>
           </tr>
-          <tr class="row">
-            <td>The Tech of Wallstreet</td>
-            <td>09/26/2023</td>
-            <td>09/28/2023</td>
-            <!-- <td>1 / 10</td> -->
-            <td>$9,116.54</td>
-            <td><router-link v-bind:to="{ name: 'spec-leaderboard' }" v-if="$store.state.token != ''"><button class="port-button">View Leaderboard</button></router-link></td>
-          </tr>
-          <tr class="row">
-            <td>Stock Madness</td>
-            <td>09/25/2023</td>
-            <td>10/02/2023</td>
-            <!-- <td>1 / 10</td> -->
-            <td>$94,671.25</td>
-            <td><router-link v-bind:to="{ name: 'spec-leaderboard' }" v-if="$store.state.token != ''"><button class="port-button">View Leaderboard</button></router-link></td>
-          </tr>
         </table>
     </div>
   </div>

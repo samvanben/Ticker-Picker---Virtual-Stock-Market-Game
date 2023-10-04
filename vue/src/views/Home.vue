@@ -27,15 +27,10 @@
             <th>Game End Date</th>
             <th>Result</th>
           </tr>
-          <tr>
-            <td>The Tech of Wallstreet</td>
-            <td>09/28/2023</td>
-            <td>3/4</td>
-          </tr>
-          <tr>
-            <td>Stock Madness</td>
-            <td>10/02/2023</td>
-            <td>1/4</td>
+          <tr v-for="endedGame in endedGames.slice(0,3)" v-bind:key="endedGame.gameId">
+            <td>{{endedGame.nameOfGame}}</td>
+            <td>{{endedGame.endDate}}</td>
+            <td>{{endedGame.availableBalance}}</td>
           </tr>
         </table>
         <router-link id="leaderboard-tag" v-bind:to="{name: 'leaderboard'}" v-if="$store.state.token != ''"><button id="view-all">View Games</button></router-link>
@@ -94,6 +89,7 @@ export default {
       },
       // We want to return a list of games the current user is in
       games: [],
+      endedGames: [],
       
       trendyStock: {
         symbol: "",
@@ -113,12 +109,15 @@ export default {
     },
   },
     created() {
-      GameService.getAllGames().then((response) => {
+      GameService.getCurrentGames().then((response) => {
         this.games = response.data;
       }),
       StockService.getTrendyStock().then((response) => {
         this.trendyStock = response.data
-    })
+      }),
+      GameService.getEndedGames().then((response) => {
+        this.endedGames = response.data;
+      })
   }
 }
 </script>

@@ -16,5 +16,13 @@ export default {
 
   getTrendyStock() {
     return axios.get('/api/stocks/trendy_stock')
+  },
+
+  getShare(gameId, symbol) {
+    return axios.get(`/api/transactions/${gameId}/${symbol}`)
+  },
+
+  getAllShares(gameId) {
+    return axios.get(`/api/games/${gameId}/shares`)
   }
 }

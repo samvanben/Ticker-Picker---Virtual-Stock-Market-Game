@@ -10,7 +10,7 @@ import java.util.Map;
 
 public interface GameDao {
     List<Game> getAllGames();
-    public Map<String, Integer> getListOfPlayersAvailableToBeAdd(int gameId);
+    public List<User> getListOfPlayersAvailableToBeAdd(int gameId);
     BigDecimal getGameUserAvailableBalance(int gameId, int userId);
     BigDecimal getGameUserTotalBalance(int gameId, int userId);
     boolean subtractFromGameUserAvailableBalance(BigDecimal amount, int gameId, int userId);

@@ -49,7 +49,7 @@ export default {
       }
     },
     created() {
-    GameService.getAllGames().then((response) => {
+    GameService.getCurrentGames().then((response) => {
       this.games = response.data;
     })
   }
