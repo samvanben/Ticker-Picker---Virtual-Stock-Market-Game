@@ -30,17 +30,10 @@ INSERT INTO stock (symbol, current_share_price, company_name) VALUES ('COST', 25
 INSERT INTO stock (symbol, current_share_price, company_name) VALUES ('PEP', 250.00, 'PepsiCo');
 INSERT INTO stock (symbol, current_share_price, company_name) VALUES ('ADBE', 250.00, 'Adobe');
 
---INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '20', 20, 3, 5, 1);
---INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '10', 1, 4,  2, 1);
---INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('sell', '15', 6, 5, 4, 2);
---INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '30', 5, 6, 1, 2);
-
--- change 2
 INSERT INTO transaction (user_id, stock_symbol, game_id, quantity) VALUES (5, 'TSLA', 2, 0);
 INSERT INTO transaction (user_id, stock_symbol, game_id, quantity) VALUES (5, 'AAPL', 2, 0);
 INSERT INTO transaction (user_id, stock_symbol, game_id, quantity) VALUES (5, 'GOOGL', 2, 0);
 INSERT INTO transaction (user_id, stock_symbol, game_id, quantity) VALUES (5, 'JPM', 2, 0);
 INSERT INTO transaction (user_id, stock_symbol, game_id, quantity) VALUES (5, 'MSFT', 2, 0);
-
 
 COMMIT TRANSACTION;

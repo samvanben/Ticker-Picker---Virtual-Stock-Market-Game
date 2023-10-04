@@ -5,6 +5,7 @@ import com.techelevator.dao.StockDao;
 import com.techelevator.dao.UserDao;
 import com.techelevator.exception.DaoException;
 import com.techelevator.model.Stock;
+import com.techelevator.model.StockListDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Controller
 @RestController
+@CrossOrigin
 //@PreAuthorize("isAuthenticated()")
 @RequestMapping(path = "/api/stocks")
 public class StockController {
@@ -43,23 +45,9 @@ public class StockController {
         this.gameDao = gameDao;
     }
 
-    @RequestMapping(path = "", method = RequestMethod.GET)
+    @RequestMapping(path = "/stocks", method = RequestMethod.GET)
     public List<Stock> listAllStocks(){
         return stockDao.getAllStocks();
-    }
-
-    @RequestMapping(path = "/{stockId}", method = RequestMethod.GET)
-    public Stock getStockBySymbol(@PathVariable int stockId){
-        return stockDao.getStockByStockId(stockId);
-    }
-
-    // TODO not working due to getStocksByOneUser() method bad sql query
-    @RequestMapping(path = "/list-my-stocks", method = RequestMethod.GET)
-    public List<Stock> getCurrentLoggedInUserAllStocks(Principal user){
-        String username = user.getName();
-        int userId = userDao.findIdByUsername(username);
-        List<Stock> returnList = stockDao.getStocksByOneUser(userId);
-        return returnList;
     }
 
     @RequestMapping(path = "/{gameId}/list-my-stocks", method = RequestMethod.GET)
@@ -92,38 +80,22 @@ public class StockController {
         stockDao.createStock(stock);
         return true;
     }
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @RequestMapping(path = "", method = RequestMethod.POST)
-//    public boolean create(@Valid @RequestBody Stock stock) {
-//        gameDao.createGame()
-//        return true;
-//    }
 
-    @RequestMapping(path = "/{stockSymbol}", method = RequestMethod.PUT)
-    public boolean update(@Valid @RequestBody Stock stockToUpdate, @PathVariable int stockId) {
-        stockToUpdate.setStockId(stockId);
-        try {
-            return stockDao.updateStock(stockToUpdate, stockId);
-        } catch (DaoException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Stock Not Found");
-        }
-    }
-
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(path = "/{stockSymbol}", method = RequestMethod.DELETE)
-    public boolean delete(@Valid @PathVariable int stockId) {
-        return stockDao.deleteStock(stockId);
-    }
     private StocksApi stocksApi = new StocksApi();
 
-    @GetMapping(path = "/stocks")
+    @GetMapping(path = "/{symbol}")
+    public StockApiDTO getStocks(@PathVariable String symbol){
+        return stocksApi.stockDataSymbol(symbol);
+    }
+
+    @GetMapping(path = "/stock_list")
+    public StockListDTO getStockList(){
+        return stocksApi.stockList();
+    }
+
+    @GetMapping(path = "/trendy_stock")
     public StockApiDTO getStocks(){
         return stocksApi.stockData();
     }
-
-//    @GetMapping(path = "/stocks")
-//    public StockApiDTO getStocks(){
-//        return stocksApi.stockData();
-//    }
 
 }

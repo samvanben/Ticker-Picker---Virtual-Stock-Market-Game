@@ -41,61 +41,18 @@ public class JdbcStockDao implements StockDao {
     }
 
     @Override
-    public Stock getStockBySymbol(String symbol) {
-        Stock stock = new Stock();
-        String sql = "SELECT * FROM stock WHERE symbol = ?";
-        try{
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, symbol.toUpperCase());
-            if(results.next()) {
-                stock = mapRowToStock(results);
-            }
-        } catch (CannotGetJdbcConnectionException e){
-            throw new DaoException( "cannot connect to server or database", e);
-        }
-        return stock;
-    }
-
-    @Override
-    public Stock getStockByStockId(int stockId) {
-        Stock stock = new Stock();
-        String sql = "SELECT * FROM stock WHERE stock_id = ?;";
-        try{
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, stockId);
-            if(results.next()) {
-                stock = mapRowToStock(results);
-            }
-        } catch (CannotGetJdbcConnectionException e){
-            throw new DaoException( "cannot connect to server or database", e);
-        }
-        return stock;
-    }
-
-    // TODO not working, bad sql
-    @Override
-    public List<Stock> getStocksByOneUser(int userId) {
+    public List<Stock> getStocksByOneUserOfGame(int userId, int gameId) {
         List<Stock> stocks = new ArrayList<>();
-        String sql = "SELECT * FROM stock WHERE stock_id in "
-                + "(SELECT user_id FROM user join transaction ON transaction.user_id = user.user_id WHERE user_id = ?)";
+        String sql = "SELECT * FROM stock JOIN transaction ON stock.stock_id = transaction.stock_id WHERE user_id = ? AND game_id = ? ;";
         try{
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
-            while (results.next()) {
-                Stock stock = mapRowToStock(results);
-                stocks.add(stock);
+            SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, userId, gameId);
+            while (sqlRowSet.next()){
+                stocks.add(mapRowToStock(sqlRowSet));
             }
-        } catch (CannotGetJdbcConnectionException e){
+        }catch (CannotGetJdbcConnectionException e){
             throw new DaoException( "cannot connect to server or database", e);
         }
         return stocks;
-    }
-
-    @Override
-    public List<Stock> getStocksByAllUsersOfGame(int gameId) {
-        return null;
-    }
-
-    @Override
-    public List<Stock> getStocksByOneUserOfGame(int userId, int gameId) {
-        return null;
     }
 
     @Override
@@ -113,23 +70,6 @@ public class JdbcStockDao implements StockDao {
         return stockId;
     }
 
-    @Override
-    public boolean updateStock(Stock updatedStock, int stockId) {
-        return false;
-    }
-
-    @Override
-    public boolean deleteStock(int stockId) {
-        return false;
-    }
-
-    private Stock mapRowToStock(SqlRowSet results) {
-        Stock stock = new Stock();
-        stock.setStockId(results.getInt("stock_id"));
-        stock.setSymbol(results.getString("symbol"));
-        return stock;
-    }
-
     public BigDecimal getStockPriceBySymbol(String symbol) {
         BigDecimal price = new BigDecimal(0);
         String sql = "SELECT current_share_price FROM stock WHERE symbol = ? ";
@@ -142,5 +82,12 @@ public class JdbcStockDao implements StockDao {
             throw new DaoException( "cannot connect to server or database", e);
         }
         return price;
+    }
+
+    private Stock mapRowToStock(SqlRowSet results) {
+        Stock stock = new Stock();
+        stock.setStockId(results.getInt("stock_id"));
+        stock.setSymbol(results.getString("symbol"));
+        return stock;
     }
 }

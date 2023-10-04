@@ -9,9 +9,6 @@ public class Transaction {
     private int gameId;
     private int userId;
     private BigDecimal price;
-//    @NotEmpty(message = "Please enter transaction type")
-//    private String transactionType;
-//    private int numberOfShares;
 
     public int getQuantity() {
         return quantity;

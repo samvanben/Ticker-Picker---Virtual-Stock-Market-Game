@@ -23,7 +23,6 @@ public class JdbcGameDao implements GameDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-
     @Override
     public List<Game> getAllGames() {
         List<Game> games = new ArrayList<>();
@@ -77,9 +76,9 @@ public class JdbcGameDao implements GameDao {
     @Override
     public Map<String, BigDecimal> orderGameMembersByTotalBalanceByGameId(int gameId) {
         Map<String, BigDecimal> orderedMap = new LinkedHashMap<>();
-        String sql = "SELECT total_balance, username FROM game_user JOIN users ON users.user_id=game_user.user_id WHERE game_id = ? ORDER BY total_balance desc; ";
+        String sql = "SELECT total_balance, username FROM game_user JOIN users ON users.user_id = game_user.user_id WHERE game_id = ? ORDER BY total_balance desc; ";
         try{
-            SqlRowSet SqlRowSet = jdbcTemplate.queryForRowSet(sql);
+            SqlRowSet SqlRowSet = jdbcTemplate.queryForRowSet(sql, gameId);
             while (SqlRowSet.next()){
                 BigDecimal totalBalance = SqlRowSet.getBigDecimal("total_balance");
                 String username = SqlRowSet.getNString("username");
@@ -128,12 +127,12 @@ public class JdbcGameDao implements GameDao {
     @Override
     public int createGame(Game gameToCreate) {
         int playerId = 0;
-        String sql = "INSERT INTO game (name_of_game, owner_name) VALUES (?, ?) RETURNING game_id";
+        String sql = "INSERT INTO game (name_of_game, owner_name, game_end_date) VALUES (?, ?, ?) RETURNING game_id";
         String addOwnerToGameSql = "INSERT INTO game_user(game_id, user_id) VALUES (?, ?) RETURNING game_user_id; ";
         String getUserIdSql = "SELECT user_id FROM users WHERE username=? ";
         try{
             // create a game on database
-            int gameId = jdbcTemplate.queryForObject(sql, int.class, gameToCreate.getNameOfGame(), gameToCreate.getOwnerName());
+            int gameId = jdbcTemplate.queryForObject(sql, int.class, gameToCreate.getNameOfGame(), gameToCreate.getOwnerName(), gameToCreate.getEndDate());
             gameToCreate.setGameId(gameId);
 
             // get creator userId from database
@@ -355,25 +354,6 @@ public class JdbcGameDao implements GameDao {
         return game;
     }
 
-    private User mapRowToUser(SqlRowSet results) {
-        User user = new User();
-        user.setId(results.getInt("user_id"));
-        user.setUsername(results.getString("username"));
-        user.setPassword(results.getString("password_hash"));
-        return user;
-    }
-
-    private GameUser mapRowToGameUser(SqlRowSet results) {
-        GameUser gameUser = new GameUser();
-        gameUser.setGameUserId((results.getInt("game_user_id")));
-        gameUser.setGameId((results.getInt("game_id")));
-        gameUser.setUserId((results.getInt("user_id")));
-        gameUser.setAvailableBalance((results.getBigDecimal("available_balance")));
-        gameUser.setTotalBalance((results.getBigDecimal("total_balance")));
-        return gameUser;
-    }
-
-    // change 8
     public boolean setGameStatusToFalse(int gameId){
         int numberOfRow = 0;
         String sql = "UPDATE game SET is_current_game = false WHERE game_id = ?;";

@@ -4,6 +4,7 @@ import com.techelevator.dao.*;
 import com.techelevator.exception.DaoException;
 import com.techelevator.model.Game;
 import com.techelevator.model.GameUser;
+import com.techelevator.model.StockApiDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.*;
 
 @Controller
 @RestController
+@CrossOrigin
 //@PreAuthorize("isAuthenticated()")
 @RequestMapping(path = "/api/games")
 public class GameController {
@@ -48,7 +50,6 @@ public class GameController {
         return returnList;
     }
 
-    // change 10
     @RequestMapping(path = "/my-games/active", method = RequestMethod.GET)
     public List<Game> getUserActiveGameList(Principal user){
         String username = user.getName();
@@ -101,7 +102,6 @@ public class GameController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(path = "/add-player", method = RequestMethod.POST)
     public boolean addUserToGame(@Valid @RequestBody GameUser gameUser) {
-
         // get players of current game, make sure the user to be added is not already in the game
         boolean exist = false;
         List<GameUser> currentGamePlayer = gameUserDao.getPlayerByGameId(gameUser.getGameId());
@@ -119,7 +119,7 @@ public class GameController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public boolean create(@Valid @RequestBody Game game) {
+    public boolean createGame(@Valid @RequestBody Game game) {
         return gameDao.createGame(game)==0 ? false : true;
     }
 
@@ -140,8 +140,6 @@ public class GameController {
         return gameDao.deleteGame(gameId)==0 ? false : true;
     }
 
-
-    // change 6
     @RequestMapping(path = "{gameId}/buy/{symbol}/{numbers}", method = RequestMethod.PUT)
     public boolean buyStock(@PathVariable String symbol, @PathVariable int gameId, @PathVariable int numbers, Principal user) {
         // get current user's user id

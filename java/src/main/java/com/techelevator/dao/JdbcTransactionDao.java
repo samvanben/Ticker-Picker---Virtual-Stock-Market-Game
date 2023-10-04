@@ -114,41 +114,6 @@ public class JdbcTransactionDao implements TransactionDao {
         return results;
     }
 
-//    @Override
-//    public int createTransaction(Transaction transactionToCreate) {
-//        int transactionId = 0;
-//        String sql = "INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES (?, ?, ?, ?, ?, ?) returning ; ";
-//        try {
-//            transactionId = jdbcTemplate.queryForObject(sql, int.class, transactionToCreate.getTransactionType(), transactionToCreate.getPrice(), transactionToCreate.getNumberOfShares(),
-//                    transactionToCreate.getUserId(), transactionToCreate.getStockId(), transactionToCreate.getGameId());
-//            transactionToCreate.setTransactionId(transactionId);
-//        } catch (CannotGetJdbcConnectionException e){
-//            throw new DaoException( "cannot connect to server or database", e);
-//        } catch (DataIntegrityViolationException e){
-//            throw new DaoException("data integrity violation", e);
-//        }
-//        return transactionId;
-//    }
-//
-//    @Override
-//    public boolean updateTransaction(Transaction transactionToUpdate, int transactionId) {
-//        boolean success = false;
-//        String sql = "UPDATE transaction SET transaction_type=?, price=?, number_of_shares=?, user_id=?, stock_id=?, game_id=? WHERE transaction_id=?;";
-//        try {
-//            int numberOfRows = jdbcTemplate.update(sql, transactionToUpdate.getTransactionType(), transactionToUpdate.getPrice(), transactionToUpdate.getNumberOfShares(),
-//                    transactionToUpdate.getUserId(), transactionToUpdate.getStockId(), transactionToUpdate.getGameId(), transactionId);
-//            if (numberOfRows == 0 ){
-//                throw new DaoException("Zero rows affected, expected at least one");
-//            }
-//            success = true;
-//        } catch (CannotGetJdbcConnectionException e){
-//            throw new DaoException( "cannot connect to server or database", e);
-//        } catch (DataIntegrityViolationException e){
-//            throw new DaoException("data integrity violation", e);
-//        }
-//        return success;
-//    }
-
     @Override
     public boolean deleteTransaction(int transactionId) {
         boolean success = false;

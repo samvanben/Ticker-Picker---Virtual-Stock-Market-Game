@@ -27,7 +27,6 @@ public interface GameDao {
     Game updateGame(Game updatedGame, int gameId);
     int deleteGame(int gameId);
 
-    // change 9
     boolean setGameStatusToFalse(int gameId);
     List<Game> getActiveGamesByUserId(int userId);
     public List<Game> getEndedGamesByUserId(int userId);
