@@ -1,18 +1,17 @@
 <template>
-  <div id="newGame">
+  <div id="invitePlayers">
       <form>
-          <h1>Create a New Game</h1>
-          <div id="form-name-game">
-              <label for="name-game">Name Game:</label>
-              <input v-model="newGame.nameOfGame" type="text" id="game-name" />
-          </div>
-          <div>
-              <label for="end-date">Choose End Date</label>
-              <input v-model="newGame.endDate" type="date" id="end-date" />
-          </div>
-          <button v-on:click.prevent="createNewGame" id="create">Create Game</button>
-          <!-- <router-link v-bind:to="{name: 'InvitePlayers', params:{id:this.$store.gameId}}" id="invite-tag" v-if="$store.state.token != ''"><button id="Create">Create Game</button></router-link> -->
-
+          <h1>Add Players!</h1>
+          <table id="invite-players">
+              <tr>
+                  <td>Usernames</td>
+              </tr>
+              <tr v-for="player in players" v-bind:key="player.id">
+                  <td>{{player.id}}</td>
+                  <td>{{player.username}}</td>
+                  <button v-on:click="invite(player.id)">Add</button>
+              </tr>
+          </table>
       </form>
   </div>
 </template>
@@ -21,27 +20,19 @@
 import GameService from '../services/GameService';
 
 export default {
-    name: "NewGame",
+    name: "InvitePlayers",
     data() {
-      return {
-        newGame: {
-          nameOfGame: "",
-          ownerName: this.$store.state.user.username,
-          gameId: 0,
-        } 
-      }
+        return {
+            players: [],
+        }
     },
-    methods: {
-      createNewGame() {
-        GameService.createGame(this.newGame).then((response) => {
-          this.gameId = response.data
-          console.log(response.data)
-          if(response.status == 201){
-            this.$router.push(`/invite_players${response.data}`)
-          }
+    created() {
+        GameService.getPlayers(this.$route.params.id).then((response) => {
+            console.log(response.data)
+            this.players = response.data;
         })
-      }
-    },
+    }
+    
 }
 </script>
 

@@ -40,15 +40,18 @@ public class JdbcGameDao implements GameDao {
     }
 
     @Override
-    public Map<String, Integer> getListOfPlayersAvailableToBeAdd(int gameId) {
-        Map<String, Integer> players = new HashMap<>();
+    public List<User> getListOfPlayersAvailableToBeAdd(int gameId) {
+        List<User> players = new ArrayList<>();
         String sql = "SELECT * FROM users WHERE user_id NOT IN (SELECT user_id FROM game_user WHERE game_id=?); ";
         try{
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql, gameId);
             while(results.next()) {
                 String username = results.getString("username");
                 int userId = results.getInt("user_id");
-                players.put(username, userId);
+                User user = new User();
+                user.setId(userId);
+                user.setUsername(username);
+                players.add(user);
             }
         } catch (CannotGetJdbcConnectionException e){
             throw new DaoException( "cannot connect to server or database", e);
@@ -132,12 +135,11 @@ public class JdbcGameDao implements GameDao {
 
         String addOwnerToGameSql = "INSERT INTO game_user(game_id, user_id) VALUES (?, ?) RETURNING game_user_id; ";
         String getUserIdSql = "SELECT user_id FROM users WHERE username=? ";
+        int gameId = 0;
         try{
             // create a game on database
 
-
-
-            int gameId = jdbcTemplate.queryForObject(sql, int.class, gameToCreate.getNameOfGame(), gameToCreate.getOwnerName(), gameToCreate.getEndDate());
+            gameId = jdbcTemplate.queryForObject(sql, int.class, gameToCreate.getNameOfGame(), gameToCreate.getOwnerName(), gameToCreate.getEndDate());
 
             gameToCreate.setGameId(gameId);
 
@@ -155,7 +157,7 @@ public class JdbcGameDao implements GameDao {
         } catch (DataIntegrityViolationException e){
             throw new DaoException("data integrity violation", e);
         }
-        return playerId;
+        return gameId;
     }
 
     @Override

@@ -15,6 +15,8 @@ import SpecLeader from "../views/SpecificLeaderboard.vue"
 import NewGame from "../views/NewGame.vue"
 import Portfolio from "../views/Portfolio.vue"
 
+import InvitePlayers from "../views/InvitePlayers.vue"
+
 
 Vue.use(Router)
 
@@ -104,10 +106,18 @@ const router = new Router({
       }
     },
     {
+      path:'/invite_players:id',
+      name:'InvitePlayers',
+      component: InvitePlayers,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path:'/:pathMatch(.*)*',
       name:'NotFound',
       component:NotFound
-    }
+    },
   ]
 })
 
