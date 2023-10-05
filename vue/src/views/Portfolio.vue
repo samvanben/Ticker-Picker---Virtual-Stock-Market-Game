@@ -30,12 +30,15 @@
 
         <!-- <h3>Value: ${{value}}</h3> -->
 
+        <button id = "end-button" v-on:click.prevent="endGameEarly">End Game Early</button>
+
     </div>
   </div>
 </template>
 
 <script>
 import BalanceService from '../services/BalanceService';
+import GameService from '../services/GameService';
 import StockService from '../services/StockService';
 
 export default {
@@ -47,7 +50,24 @@ export default {
       stockList: [],
       numbers: 0,
       sharesList: [],
-      test: []
+      test: [],
+      // testShares: [
+      //   {
+      //     symbol: 'TSLA', quantity: 0
+      //   },
+      //   {
+      //     symbol: 'AAPL', quantity: 0
+      //   },
+      //   {
+      //     symbol: 'GOOGL', quantity: 0
+      //   },
+      //   {
+      //     symbol: 'JPM', quantity: 0
+      //   },
+      //   {
+      //     symbol: 'MSFT', quantity: 0
+      //   }
+      // ]
     };
   },
 
@@ -57,31 +77,59 @@ export default {
         if(response.data == true){
           this.balance = BalanceService.getBalance(this.$route.params.id).then((response) => {
             this.balance = response.data;
-          })
-        }
-      })
-      let currentShares = this.sharesList.find((share) => {
+            let doesntExist = true;
+            this.sharesList.find((share) => {
         if(share.symbol.toUpperCase() === symbol) {
           share.quantity = parseInt(share.quantity) + parseInt(this.numbers);
+          doesntExist = false;
         }
       })
-      console.log(currentShares)
+          if(doesntExist == true){
+            
+            let newShare = {symbol: symbol, quantity: this.numbers}
+            this.sharesList.push(newShare)
+          }
+      })
+          
+        }
+      })
+      // let currentShares = this.sharesList.find((share) => {
+      //   if(share.symbol.toUpperCase() === symbol) {
+      //     share.quantity = parseInt(share.quantity) + parseInt(this.numbers);
+      //   }
+      // })
+      // console.log(currentShares)
     },
     sellStocks(symbol, stock) {
       BalanceService.sellStock(this.$route.params.id, symbol, this.numbers, stock).then((response) => {
         if(response.data == true){
           this.balance = BalanceService.getBalance(this.$route.params.id).then((response) => {
             this.balance = response.data;
-          })
-        }
-      })
-      let currentShares = this.sharesList.find((share) => {
+            this.sharesList.map((share) => {
+              console.log(share.symbol + ' ' + symbol)
         if(share.symbol.toUpperCase() === symbol) {
+          console.log('reach selling if statement')
           share.quantity -= parseInt(this.numbers);
         }
       })
-      console.log(currentShares)
-      // currentShares.quantity -= this.numbers;
+          })
+        }
+      })
+      // let currentShares = this.sharesList.find((share) => {
+      //   if(share.symbol.toUpperCase() === symbol) {
+      //     share.quantity -= parseInt(this.numbers);
+      //   }
+      // })
+      // console.log(currentShares)
+    },
+    endGameEarly() {
+      GameService.endGame(this.$route.params.id).then((response) => {
+        console.log(response)
+        if(response.data == true){
+            this.$router.push('/lobby')
+          }
+          console.log(response.data)
+      })
     },
     getShares(symbol) {
       StockService.getShare(this.$route.params.id, symbol).then((response) => {
@@ -133,7 +181,9 @@ export default {
       this.stockList = response.data;
     }),
     StockService.getAllShares(this.$route.params.id).then((response) => {
+      console.log(this.$route.params.id + ' parameter id')
       this.sharesList = response.data;
+      console.log(this.sharesList)
     })
     // function(){
     //   for(let stock of this.stockList) {
@@ -232,4 +282,19 @@ export default {
     background-color: rgba(255, 0, 0, 0.63);
     font-weight: bold;
   }
+  #end-button {
+    background-color: rgba(219, 41, 41, 0.849);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    border-radius: 10px;
+    border-style: none;
+    color: white;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+#end-button:hover {
+    background-color: rgba(219, 41, 41, 0.699);
+}
 </style>

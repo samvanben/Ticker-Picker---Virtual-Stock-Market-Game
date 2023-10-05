@@ -21,8 +21,10 @@ INSERT INTO game_user (game_id, user_id) VALUES ('2','3');
 INSERT INTO game_user (game_id, user_id) VALUES ('2','5');
 INSERT INTO game_user (game_id, user_id) VALUES ('2','6');
 INSERT INTO game_user (game_id, user_id) VALUES ('3','3');
+INSERT INTO game_user (game_id, user_id) VALUES ('3','5');
 INSERT INTO game_user (game_id, user_id) VALUES ('3','6');
 INSERT INTO game_user (game_id, user_id) VALUES ('4','4');
+INSERT INTO game_user (game_id, user_id) VALUES ('4','5');
 INSERT INTO game_user (game_id, user_id) VALUES ('4','6');
 
 INSERT INTO stock (symbol, current_share_price, company_name) VALUES ('AAPL', 250.00, 'Apple');

@@ -22,8 +22,16 @@ export default {
     return axios.get(`/api/games/${gameId}/add-player`)
   },
 
-  addPlayer() {
-    return axios.post('api/games/add-player')
+  addPlayer(player) {
+    return axios.post('/api/games/add-player', player)
+  },
+
+  getLeaderboard(gameId) {
+    return axios.get(`api/games/${gameId}/leaderboard/available-balance`)
+  },
+
+  endGame(gameId) {
+    return axios.get(`/api/games/${gameId}/end-game`)
   }
 
 }

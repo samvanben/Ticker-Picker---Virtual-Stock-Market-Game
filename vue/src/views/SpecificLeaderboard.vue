@@ -2,26 +2,16 @@
   <div id="specific-leaderboard">
       <div id="lobby-bin">
         <h2 id="lobby-head">This Game's Leaderboard</h2>
-        <table id="current-games">
+        <table id="player-attributes">
           <tr>
             <th>User Rank</th>
             <th>Username</th>
             <th>Balance</th>
           </tr>
-          <tr class="row">
-            <td>1</td>    
-            <td>Hagen</td>
-            <td>$88,946.20</td>
-          </tr>
-          <tr class="row">
-            <td>2</td>  
-            <td>Ellie</td>
-            <td>$58056.35</td>
-          </tr>
-          <tr class="row">
-            <td>3</td>
-            <td>Sam</td>
-            <td>$14,386.16</td>
+          <tr class="row" v-for="(stats,index) in playerStats" v-bind:key="stats.gameId">
+            <td>{{index + 1}}</td>
+            <td>{{stats.username}}</td>
+            <td>${{stats.availableBalance}}</td>
           </tr>
         </table>
     </div>
@@ -29,8 +19,26 @@
 </template>
 
 <script>
+import GameService from '../services/GameService';
+
 export default {
     name: "SpecLeader",
+    data() {
+      return {
+        playerStats: [],
+      }
+    },
+    methods:{
+      setGameId(gameId) {
+        console.log(gameId)
+        this.$store.commit('SET_GAME_ID', gameId)
+      }
+    },
+    created() {
+      GameService.getLeaderboard(this.$route.params.id).then((response) => {
+        this.playerStats = response.data;
+      })
+    }
 }
 </script>
 

@@ -113,6 +113,7 @@ form input:first-of-type {
   border-style: none;
   box-shadow: 2px 2px 4px;
   font-weight: bold;
+  margin-bottom: 20px;
 }
 form button:hover {
   background-color: rgb(26, 116, 26);

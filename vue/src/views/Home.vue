@@ -24,13 +24,13 @@
         <table id="past-games">
           <tr>
             <th>Game Name</th>
-            <th>Game End Date</th>
-            <th>Result</th>
+            <!-- <th>Game End Date</th> -->
+            <th>Final Balance</th>
           </tr>
           <tr v-for="endedGame in endedGames.slice(0,3)" v-bind:key="endedGame.gameId">
             <td>{{endedGame.nameOfGame}}</td>
-            <td>{{endedGame.endDate}}</td>
-            <td>{{endedGame.availableBalance}}</td>
+            <!-- <td>{{endedGame.endDate}}</td> -->
+            <td>${{endedGame.availableBalance}}</td>
           </tr>
         </table>
         <router-link id="leaderboard-tag" v-bind:to="{name: 'leaderboard'}" v-if="$store.state.token != ''"><button id="view-all">View Games</button></router-link>

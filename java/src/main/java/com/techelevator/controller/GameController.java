@@ -76,9 +76,19 @@ public class GameController {
         return users;
     }
 
-    @RequestMapping(path = "/{gameId}/leaderboard", method = RequestMethod.GET)
-    public Map<String, BigDecimal> LeaderboardOfAGame(@PathVariable int gameId) {
-        Map<String, BigDecimal> orderedMap = new LinkedHashMap<>();
+//    @RequestMapping(path = "/{gameId}/leaderboard", method = RequestMethod.GET)
+//    public Map<String, BigDecimal> LeaderboardOfAGame(@PathVariable int gameId) {
+//        Map<String, BigDecimal> orderedMap = new LinkedHashMap<>();
+//        return gameDao.orderGameMembersByTotalBalanceByGameId(gameId);
+//    }
+
+    @RequestMapping(path = "/{gameId}/leaderboard/available-balance", method = RequestMethod.GET)
+    public List<GameUser> LeaderboardOfAGameByAvailableBalance(@PathVariable int gameId){
+        return gameDao.orderGameMembersByAvailableBalanceByGameId(gameId);
+    }
+
+    @RequestMapping(path = "/{gameId}/leaderboard/total-balance", method = RequestMethod.GET)
+    public List<GameUser> LeaderboardOfAGameByTotalBalance(@PathVariable int gameId){
         return gameDao.orderGameMembersByTotalBalanceByGameId(gameId);
     }
 
@@ -156,8 +166,8 @@ public class GameController {
         // get transaction amount and commission to check if available balance can cover the transaction
         BigDecimal transactionAmount = stockPrice.multiply(BigDecimal.valueOf(numbers));
         // optional add commission to the transaction
-//        BigDecimal commission = BigDecimal.valueOf(19.95);
-//        BigDecimal totalAmount = transactionAmount.add(commission);
+        BigDecimal commission = BigDecimal.valueOf(19.95);
+        BigDecimal totalAmount = transactionAmount.add(commission);
         // if available balance can cover the transaction, proceed to buy
         if (transactionAmount.compareTo(gameDao.getAvailableBalanceByUserGame(userId, gameId)) <= 0) {
             // implement logic of shares of stocks holding
@@ -167,7 +177,7 @@ public class GameController {
                 int numbersOfSharesHolding = transactionDao.getStockQuantity(userId, gameId, symbol) + numbers;
                 transactionDao.updateTransactionForStock(numbersOfSharesHolding, userId, gameId, symbol);
             }
-            return gameDao.subtractFromGameUserAvailableBalance(transactionAmount, gameId, userId);
+            return gameDao.subtractFromGameUserAvailableBalance(totalAmount, gameId, userId);
         } else {
             new IOException("Insufficient Fund");
         }
@@ -190,9 +200,9 @@ public class GameController {
             BigDecimal stockPrice = BigDecimal.valueOf(stock.getClose());
             // get transaction amount and commission, proceed to sell
             BigDecimal transactionAmount = stockPrice.multiply(BigDecimal.valueOf(numbers));
-//            BigDecimal commission = BigDecimal.valueOf(19.95);
-//            BigDecimal totalAmount = transactionAmount.subtract(commission);
-            gameDao.addToGameUserAvailableBalance(transactionAmount, gameId, userId);
+            BigDecimal commission = BigDecimal.valueOf(19.95);
+            BigDecimal totalAmount = transactionAmount.subtract(commission);
+            gameDao.addToGameUserAvailableBalance(totalAmount, gameId, userId);
 
             // implement logic of shares of stocks holding
             int numbersOfSharesHolding = transactionDao.getStockQuantity(userId, gameId, symbol) - numbers;
@@ -214,9 +224,9 @@ public class GameController {
             BigDecimal stockPrice = BigDecimal.valueOf(stock.getClose());
             // get transaction amount and commission, proceed to sell
             BigDecimal transactionAmount = stockPrice.multiply(BigDecimal.valueOf(numbers));
-//            BigDecimal commission = BigDecimal.valueOf(19.95);
-//            BigDecimal totalAmount = transactionAmount.subtract(commission);
-            gameDao.addToGameUserAvailableBalance(transactionAmount, gameId, userId);
+            BigDecimal commission = BigDecimal.valueOf(19.95);
+            BigDecimal totalAmount = transactionAmount.subtract(commission);
+            gameDao.addToGameUserAvailableBalance(totalAmount, gameId, userId);
 
             // implement logic of shares of stocks holding
             int numbersOfSharesHolding = transactionDao.getStockQuantity(userId, gameId, symbol) - numbers;

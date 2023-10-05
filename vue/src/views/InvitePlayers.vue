@@ -3,15 +3,13 @@
       <form>
           <h1>Add Players!</h1>
           <table id="invite-players">
-              <tr>
-                  <td>Usernames</td>
-              </tr>
               <tr v-for="player in players" v-bind:key="player.id">
-                  <td>{{player.id}}</td>
+                  <!-- <td>{{player.id}}</td> -->
                   <td>{{player.username}}</td>
-                  <button v-on:click="invite(player.id)">Add</button>
+                  <button v-on:click.prevent="invite(player.id)">Add</button>
               </tr>
           </table>
+          <router-link v-bind:to="{name: 'lobby'}" v-if="$store.state.token != ''"> <button>Trading Floor</button></router-link>
       </form>
   </div>
 </template>
@@ -24,7 +22,25 @@ export default {
     data() {
         return {
             players: [],
+            player: {
+              gameId: this.$route.params.id,
+              userId: ''
+            }
         }
+    },
+    methods: {
+      invite(playerId) {
+        this.player.userId = playerId
+        GameService.addPlayer(this.player).then((response) => {
+          if(response.status == 201){
+            this.players = this.players.filter(player => 
+              player.id !== playerId
+              
+            )
+         
+          }
+        })
+      }
     },
     created() {
         GameService.getPlayers(this.$route.params.id).then((response) => {
@@ -104,6 +120,7 @@ form input:first-of-type {
   border-style: none;
   box-shadow: 2px 2px 4px;
   font-weight: bold;
+  margin-bottom: 20px;
 }
 form button:hover {
   background-color: rgb(26, 116, 26);
