@@ -4,6 +4,7 @@
         <h2 id="bin-head">Portfolio</h2>
         <h5>Input Number of Shares:</h5>
         <input v-model="numbers" type="number" id />
+        <p>** All trades incur a $19.95 commission fee **</p>
         <table id="portfolio-tab">
           <tr>
             <th>Ticker Symbol</th>
@@ -14,7 +15,7 @@
             <th>Buy</th>
             <th>Sell</th>
           </tr>
-          <tr v-for="(stock, index) in stockList" v-bind:key="index">
+          <tr v-for="(stock, index) in stockList" v-bind:key="index" class = 'player-row'>
             <td>${{stock.symbol}}</td>
             <td>${{stock.close}}</td>
             <td>{{stock.exchange}}</td>
@@ -222,6 +223,7 @@ export default {
   #portfolio-tab {
     color: white;
     margin-bottom: 15px;
+
   }
   .portfolio-bin {
     background-color: rgba(69, 69, 69, 0.75);
@@ -297,4 +299,8 @@ export default {
 #end-button:hover {
     background-color: rgba(219, 41, 41, 0.699);
 }
+p {
+  color: white;
+}
+
 </style>

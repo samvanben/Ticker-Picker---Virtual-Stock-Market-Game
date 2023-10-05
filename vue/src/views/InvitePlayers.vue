@@ -1,9 +1,9 @@
 <template>
   <div id="invitePlayers">
-      <form>
+      <form id = 'formId'>
           <h1>Add Players!</h1>
           <table id="invite-players">
-              <tr v-for="player in players" v-bind:key="player.id">
+              <tr v-for="player in players" v-bind:key="player.id" class = "player-row">
                   <!-- <td>{{player.id}}</td> -->
                   <td>{{player.username}}</td>
                   <button v-on:click.prevent="invite(player.id)">Add</button>
@@ -108,6 +108,10 @@ form input:first-of-type {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    width: 100vw;
+    margin-left: 35vw;
+    margin-right: 35vw;
   }
   form button {
   margin-top: 2rem;
@@ -124,6 +128,13 @@ form input:first-of-type {
 }
 form button:hover {
   background-color: rgb(26, 116, 26);
+}
+.player-row{
+  display: flex;
+  text-align: center;
+}
+.player-row button {
+  margin-left: 20px;
 }
 
 </style>
