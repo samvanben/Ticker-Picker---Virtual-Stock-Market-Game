@@ -3,7 +3,7 @@
       <div id="lobby-bin">
         <h2 id="lobby-head">The Trading Floor</h2>
         <div id="current-buttons">
-          <router-link id="newGame-tag" v-bind:to="{name: 'newGame'}" v-if="$store.state.token != ''"><button id="newGame">+ New Game</button></router-link>
+          <router-link id="newGame-tag" v-bind:to="{name: 'newGame'}" v-if="$store.state.token != ''"><button id="new-game">+ New Game</button></router-link>
 
         </div>
         <table id="current-games">
@@ -11,51 +11,61 @@
             <th>Game Name</th>
             <th>Game Start Date</th>
             <th>Game End Date</th>
-            <th>User Standing</th>
+            <!-- user ranking -->
             <th>Balance</th>
+            <!-- <th>Portfolio Value</th> -->
             <th>View Portfolio</th>
           </tr>
-          <tr class="row">
-            <td>Game One</td>
-            <td>12/12/2023</td>
-            <td>12/12/2023</td>
-            <td>1 / 10</td>
-            <td>$88,000.00</td>
-            <td><router-link id="port-tag" v-bind:to="{name: 'portfolio'}" v-if="$store.state.token != ''"><button id="portfolio">View Portfolio</button></router-link></td>
+          <tr v-for="game in games" v-bind:key="game.gameId">
+            <td>{{game.nameOfGame}}</td>
+            <td>{{game.startDate}}</td>
+            <td>{{game.endDate}}</td>
+            <!-- index of -->
+            <td>${{game.availableBalance}}</td>
+            <!-- <td>${{game.totalBalance}}</td> -->
+            <td><router-link v-bind:to="{name: 'portfolio', params:{id:game.gameId}}" id="port-tag" v-if="$store.state.token != ''"><button id="portfolio">View Portfolio</button></router-link></td>
           </tr>
-          <tr class="row">
-            <td>Game Two</td>
-            <td>12/12/2023</td>
-            <td>12/12/2023</td>
-            <td>1 / 10</td>
-            <td>$88,000.00</td>
-            <td><router-link id="port-tag" v-bind:to="{name: 'portfolio'}" v-if="$store.state.token != ''"><button id="portfolio">View Portfolio</button></router-link></td>
-          </tr>
-          <tr class="row">
-            <td>Game Three</td>
-            <td>12/12/2023</td>
-            <td>12/12/2023</td>
-            <td>1 / 10</td>
-            <td>$88,000.00</td>
-            <td><button class="port-button">View Portfolio</button></td>
-          </tr>
+          <!-- v-on:click="setGameId(game.gameId)" -->
         </table>
     </div>
   </div>
 </template>
 
 <script>
+import GameService from '../services/GameService';
+
 export default {
     name: "Lobby",
+    data() {
+      return {
+        games: [],
+        
+      }
+    },
+    methods: {
+      setGameId(gameId) {
+        console.log(gameId)
+        this.$store.commit('SET_GAME_ID', gameId)
+      }
+    },
+    created() {
+    GameService.getCurrentGames().then((response) => {
+      this.games = response.data;
+    })
+  }
 }
 </script>
 
-<style>
+<style scoped>
 #lobby {
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
+}
+
+h2 {
+  color: white;
 }
 
 #lobby-bin {
@@ -90,7 +100,7 @@ export default {
 #new-game:hover {
     background-color: rgb(43, 114, 43);
 }
-.port-button {
+#portfolio {
     background-color: rgb(90, 212, 90);
     padding-top: 10px;
     padding-bottom: 10px;
@@ -99,7 +109,7 @@ export default {
     border-radius: 10px;
     border-style: none;
 }
-.port-button:hover {
+#portfolio:hover {
     background-color: rgb(43, 114, 43);
 }
 th {

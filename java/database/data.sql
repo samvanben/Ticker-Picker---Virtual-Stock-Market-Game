@@ -8,30 +8,40 @@ INSERT INTO users(username, password_hash, first_name, last_name, role) VALUES (
 INSERT INTO users(username, password_hash, first_name, last_name, role) VALUES ('ellie', '$2a$10$K2VTobYUZldGdrgbiyvEJOdaUyUhUjPMivimAOdkkzkbVN.ARjsdy', 'Ellie', 'Lin', 'ROLE_ADMIN');
 INSERT INTO users(username, password_hash, first_name, last_name, role) VALUES ('sam', '$2a$10$DS0l9zbQkTEmVB7xrDxxdeptgRaDyQk/i9EVQanPKpukbHi08aaam', 'Sam', 'VanBennekom', 'ROLE_ADMIN');
 
-INSERT INTO game (name_of_game, game_start_date, game_end_date, owner_name) VALUES ('test game 1', '2023-09-25', '2023-10-25','ellie');
-INSERT INTO game (name_of_game, game_start_date, game_end_date, owner_name) VALUES ('test game 2', '2018-10-21', '2023-09-21', 'hagen');
+INSERT INTO game (name_of_game, game_start_date, game_end_date, owner_name) VALUES ('game 1', '2023-09-25', '2023-10-25','ellie');
+INSERT INTO game (name_of_game, game_start_date, game_end_date, owner_name) VALUES ('game 2', '2018-10-21', '2023-09-21', 'hagen');
+INSERT INTO game (name_of_game, game_start_date, game_end_date, owner_name, is_current_game) VALUES ('game 3', '2023-09-25', '2023-10-25','ellie',false);
+INSERT INTO game (name_of_game, game_start_date, game_end_date, owner_name, is_current_game) VALUES ('game 4', '2023-09-25', '2023-10-25','ellie',false);
 
 INSERT INTO game_user (game_id, user_id) VALUES ('1','1');
 INSERT INTO game_user (game_id, user_id) VALUES ('1','4');
+INSERT INTO game_user (game_id, user_id) VALUES ('1','5');
 INSERT INTO game_user (game_id, user_id) VALUES ('2','1');
 INSERT INTO game_user (game_id, user_id) VALUES ('2','3');
 INSERT INTO game_user (game_id, user_id) VALUES ('2','5');
 INSERT INTO game_user (game_id, user_id) VALUES ('2','6');
+INSERT INTO game_user (game_id, user_id) VALUES ('3','3');
+INSERT INTO game_user (game_id, user_id) VALUES ('3','5');
+INSERT INTO game_user (game_id, user_id) VALUES ('3','6');
+INSERT INTO game_user (game_id, user_id) VALUES ('4','4');
+INSERT INTO game_user (game_id, user_id) VALUES ('4','5');
+INSERT INTO game_user (game_id, user_id) VALUES ('4','6');
 
-INSERT INTO stock (symbol, company_name) VALUES ('AAPL', 'Apple');
-INSERT INTO stock (symbol, company_name) VALUES ('MSFT', 'Microsoft');
-INSERT INTO stock (symbol, company_name) VALUES ('AMZN', 'Amazon');
-INSERT INTO stock (symbol, company_name) VALUES ('TSLA', 'Tesla');
-INSERT INTO stock (symbol, company_name) VALUES ('NVDA', 'NVIDIA');
-INSERT INTO stock (symbol, company_name) VALUES ('GOOGL', 'Alphabet Class A');
-INSERT INTO stock (symbol, company_name) VALUES ('JPM', 'JPMorgan Chase');
-INSERT INTO stock (symbol, company_name) VALUES ('COST', 'Costco');
-INSERT INTO stock (symbol, company_name) VALUES ('PEP', 'PepsiCo');
-INSERT INTO stock (symbol, company_name) VALUES ('ADBE', 'Adobe');
+INSERT INTO stock (symbol, current_share_price, company_name) VALUES ('AAPL', 250.00, 'Apple');
+INSERT INTO stock (symbol, current_share_price, company_name) VALUES ('MSFT', 250.00, 'Microsoft');
+INSERT INTO stock (symbol, current_share_price, company_name) VALUES ('AMZN', 250.00, 'Amazon');
+INSERT INTO stock (symbol, current_share_price, company_name) VALUES ('TSLA', 250.00, 'Tesla');
+INSERT INTO stock (symbol, current_share_price, company_name) VALUES ('NVDA', 250.00, 'NVIDIA');
+INSERT INTO stock (symbol, current_share_price, company_name) VALUES ('GOOGL', 250.00, 'Alphabet Class A');
+INSERT INTO stock (symbol, current_share_price, company_name) VALUES ('JPM', 250.00, 'JPMorgan Chase');
+INSERT INTO stock (symbol, current_share_price, company_name) VALUES ('COST', 250.00, 'Costco');
+INSERT INTO stock (symbol, current_share_price, company_name) VALUES ('PEP', 250.00, 'PepsiCo');
+INSERT INTO stock (symbol, current_share_price, company_name) VALUES ('ADBE', 250.00, 'Adobe');
 
-INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '20', 20, 3, 5, 1);
-INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '10', 1, 4,  2, 1);
-INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('sell', '15', 6, 5, 4, 2);
-INSERT INTO transaction (transaction_type, price, number_of_shares, user_id, stock_id, game_id) VALUES ('buy', '30', 5, 6, 1, 2);
+INSERT INTO transaction (user_id, stock_symbol, game_id, quantity) VALUES (5, 'TSLA', 2, 0);
+INSERT INTO transaction (user_id, stock_symbol, game_id, quantity) VALUES (5, 'AAPL', 2, 0);
+INSERT INTO transaction (user_id, stock_symbol, game_id, quantity) VALUES (5, 'GOOGL', 2, 0);
+INSERT INTO transaction (user_id, stock_symbol, game_id, quantity) VALUES (5, 'JPM', 2, 0);
+INSERT INTO transaction (user_id, stock_symbol, game_id, quantity) VALUES (5, 'MSFT', 2, 0);
 
 COMMIT TRANSACTION;

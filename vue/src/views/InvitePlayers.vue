@@ -1,18 +1,15 @@
 <template>
-  <div id="newGame">
-      <form>
-          <h1>Create a New Game</h1>
-          <div id="form-name-game">
-              <label for="name-game">Name Game:</label>
-              <input v-model="newGame.nameOfGame" type="text" id="game-name" />
-          </div>
-          <div>
-              <label for="end-date">Choose End Date</label>
-              <input v-model="newGame.endDate" type="date" id="end-date" />
-          </div>
-          <button v-on:click.prevent="createNewGame" id="create">Create Game</button>
-          <!-- <router-link v-bind:to="{name: 'InvitePlayers', params:{id:this.$store.gameId}}" id="invite-tag" v-if="$store.state.token != ''"><button id="Create">Create Game</button></router-link> -->
-
+  <div id="invitePlayers">
+      <form id = 'formId'>
+          <h1>Add Players!</h1>
+          <table id="invite-players">
+              <tr v-for="player in players" v-bind:key="player.id" class = "player-row">
+                  <!-- <td>{{player.id}}</td> -->
+                  <td>{{player.username}}</td>
+                  <button v-on:click.prevent="invite(player.id)">Add</button>
+              </tr>
+          </table>
+          <router-link v-bind:to="{name: 'lobby'}" v-if="$store.state.token != ''"> <button>Trading Floor</button></router-link>
       </form>
   </div>
 </template>
@@ -21,27 +18,37 @@
 import GameService from '../services/GameService';
 
 export default {
-    name: "NewGame",
+    name: "InvitePlayers",
     data() {
-      return {
-        newGame: {
-          nameOfGame: "",
-          ownerName: this.$store.state.user.username,
-          gameId: 0,
-        } 
-      }
+        return {
+            players: [],
+            player: {
+              gameId: this.$route.params.id,
+              userId: ''
+            }
+        }
     },
     methods: {
-      createNewGame() {
-        GameService.createGame(this.newGame).then((response) => {
-          this.gameId = response.data
-          console.log(response.data)
+      invite(playerId) {
+        this.player.userId = playerId
+        GameService.addPlayer(this.player).then((response) => {
           if(response.status == 201){
-            this.$router.push(`/invite_players${response.data}`)
+            this.players = this.players.filter(player => 
+              player.id !== playerId
+              
+            )
+         
           }
         })
       }
     },
+    created() {
+        GameService.getPlayers(this.$route.params.id).then((response) => {
+            console.log(response.data)
+            this.players = response.data;
+        })
+    }
+    
 }
 </script>
 
@@ -101,6 +108,10 @@ form input:first-of-type {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    width: 100vw;
+    margin-left: 35vw;
+    margin-right: 35vw;
   }
   form button {
   margin-top: 2rem;
@@ -117,6 +128,13 @@ form input:first-of-type {
 }
 form button:hover {
   background-color: rgb(26, 116, 26);
+}
+.player-row{
+  display: flex;
+  text-align: center;
+}
+.player-row button {
+  margin-left: 20px;
 }
 
 </style>

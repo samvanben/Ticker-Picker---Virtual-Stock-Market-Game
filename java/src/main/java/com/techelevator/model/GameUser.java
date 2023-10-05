@@ -13,6 +13,15 @@ public class GameUser {
     private BigDecimal availableBalance;
 
     private BigDecimal totalBalance;
+    private String username = "";
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
     public GameUser() {
     }
     public GameUser(int gameId, int userId, BigDecimal availableBalance, BigDecimal totalBalance) {
