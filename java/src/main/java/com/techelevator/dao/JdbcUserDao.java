@@ -85,40 +85,6 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public BigDecimal getProfileBalanceByUserId(int userId) {
-        BigDecimal profileBalance = new BigDecimal(0);
-        String sql = "SELECT profile_balance FROM users WHERE user_id=? ;";
-        try{
-            SqlRowSet SqlRowSet = jdbcTemplate.queryForRowSet(sql, userId);
-            if (SqlRowSet.next()){
-                profileBalance = SqlRowSet.getBigDecimal("profile_balance");
-            }
-        } catch (CannotGetJdbcConnectionException e){
-            throw new DaoException( "cannot connect to server or database", e);
-        } catch (DataIntegrityViolationException e){
-            throw new DaoException("data integrity violation", e);
-        }
-        return profileBalance;
-    }
-
-    @Override
-    public BigDecimal getProfileBalanceByUsername(String username) {
-        BigDecimal profileBalance = new BigDecimal(0);
-        String sql = "SELECT profile_balance FROM users WHERE username=? ;";
-        try{
-            SqlRowSet SqlRowSet = jdbcTemplate.queryForRowSet(sql, username);
-            if (SqlRowSet.next()){
-                profileBalance = SqlRowSet.getBigDecimal("profile_balance");
-            }
-        } catch (CannotGetJdbcConnectionException e){
-            throw new DaoException( "cannot connect to server or database", e);
-        } catch (DataIntegrityViolationException e){
-            throw new DaoException("data integrity violation", e);
-        }
-        return profileBalance;
-    }
-
-    @Override
     public boolean updateUser(User updatedUser, int userId) {
         boolean success = false;
         String sqlUpdateRelatedGameOwner = "UPDATE game SET owner_name='admin' WHERE owner_name=(SELECT username FROM users WHERE user_id=? ); ";

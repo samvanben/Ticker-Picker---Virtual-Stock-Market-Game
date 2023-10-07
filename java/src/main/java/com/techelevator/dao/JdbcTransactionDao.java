@@ -85,36 +85,6 @@ public class JdbcTransactionDao implements TransactionDao {
     }
 
     @Override
-    public List<Transaction> getTransactionsByUsername(String username) {
-        List<Transaction> results = new ArrayList<>();
-        String sql = "SELECT * FROM transaction WHERE user_id=(SELECT user_id FROM users WHERE username=?);";
-        try{
-            SqlRowSet SqlRowSet = jdbcTemplate.queryForRowSet(sql, username);
-            while (SqlRowSet.next()){
-                results.add(mapRowToTransaction(SqlRowSet));
-            }
-        } catch (CannotGetJdbcConnectionException e){
-            throw new DaoException( "cannot connect to server or database", e);
-        }
-        return results;
-    }
-
-    @Override
-    public List<Transaction> getTransactionsByUsernameGame(String username, int gameId) {
-        List<Transaction> results = new ArrayList<>();
-        String sql = "SELECT * FROM transaction WHERE user_id=(SELECT user_id FROM users WHERE username=?) AND game_id=?; ";
-        try{
-            SqlRowSet SqlRowSet = jdbcTemplate.queryForRowSet(sql, username, gameId);
-            while (SqlRowSet.next()){
-                results.add(mapRowToTransaction(SqlRowSet));
-            }
-        } catch (CannotGetJdbcConnectionException e){
-            throw new DaoException( "cannot connect to server or database", e);
-        }
-        return results;
-    }
-
-    @Override
     public boolean deleteTransaction(int transactionId) {
         boolean success = false;
         String sql = "DELETE FROM transaction WHERE transaction_id = ?";
@@ -130,16 +100,6 @@ public class JdbcTransactionDao implements TransactionDao {
             throw new DaoException("Data integrity violation", e);
         }
         return success;
-    }
-
-    private Transaction mapRowToTransaction(SqlRowSet results) {
-        Transaction transaction = new Transaction();
-        transaction.setTransactionId(results.getInt("transaction_id"));
-        transaction.setUserId(results.getInt("user_id"));
-        transaction.setSymbol(results.getString("stock_symbol"));
-        transaction.setGameId(results.getInt("game_id"));
-        transaction.setQuantity(results.getInt("quantity"));
-        return transaction;
     }
 
     // change 3 below all
@@ -227,5 +187,15 @@ public class JdbcTransactionDao implements TransactionDao {
             throw new DaoException( "cannot connect to server or database", e);
         }
         return stocks;
+    }
+
+    private Transaction mapRowToTransaction(SqlRowSet results) {
+        Transaction transaction = new Transaction();
+        transaction.setTransactionId(results.getInt("transaction_id"));
+        transaction.setUserId(results.getInt("user_id"));
+        transaction.setSymbol(results.getString("stock_symbol"));
+        transaction.setGameId(results.getInt("game_id"));
+        transaction.setQuantity(results.getInt("quantity"));
+        return transaction;
     }
 }

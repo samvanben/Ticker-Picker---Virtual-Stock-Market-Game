@@ -6,17 +6,17 @@
           <tr>
             <th>Game Name</th>
             <th>Game End Date</th>
-            <th>Current Place</th>
+            <th>Balance</th>
           </tr>
           <tr v-for="game in games.slice(0,3)" v-bind:key="game.gameId">
             <td>{{game.nameOfGame}}</td>
             <td>{{game.endDate}}</td>
-            <td>balance</td>
+            <td>${{game.availableBalance}}</td>
           </tr>
         </table>
         <div id="current-buttons">
           <router-link id="lobby-tag" v-bind:to="{name: 'lobby'}" v-if="$store.state.token != ''"><button id="view-all">View Games</button></router-link>
-          <router-link id="newGame-tag" v-bind:to="{name: 'newGame'}" v-if="$store.state.token != ''"><button id="newGame">+ New Game</button></router-link>
+          <router-link id="newGame-tag" v-bind:to="{name: 'newGame'}" v-if="$store.state.token != ''"><button id="new-game">+ New Game</button></router-link>
         </div>
     </div>
     <div id="home-bin-2" class="home-bin-upper">
@@ -24,23 +24,13 @@
         <table id="past-games">
           <tr>
             <th>Game Name</th>
-            <th>Game End Date</th>
-            <th>Result</th>
+            <!-- <th>Game End Date</th> -->
+            <th>Final Balance</th>
           </tr>
-          <tr>
-            <td>Game One</td>
-            <td>12/12/2023</td>
-            <td>1 / 10</td>
-          </tr>
-          <tr>
-            <td>Game Two</td>
-            <td>12/12/2023</td>
-            <td>1 / 10</td>
-          </tr>
-          <tr>
-            <td>Game Three</td>
-            <td>12/12/2023</td>
-            <td>1 / 10</td>
+          <tr v-for="endedGame in endedGames.slice(0,3)" v-bind:key="endedGame.gameId">
+            <td>{{endedGame.nameOfGame}}</td>
+            <!-- <td>{{endedGame.endDate}}</td> -->
+            <td>${{endedGame.availableBalance}}</td>
           </tr>
         </table>
         <router-link id="leaderboard-tag" v-bind:to="{name: 'leaderboard'}" v-if="$store.state.token != ''"><button id="view-all">View Games</button></router-link>
@@ -56,9 +46,9 @@
           </tr>
           <tr>
             <td>Apple</td>
-            <td>$AAPL</td>
-            <td>$174.10</td>
-            <td>NASDAQ</td>
+            <td>${{trendyStock.symbol}}</td>
+            <td>${{trendyStock.close}}</td>
+            <td>{{trendyStock.exchange}}</td>
           </tr>
         </table>  
     </div>
@@ -99,6 +89,13 @@ export default {
       },
       // We want to return a list of games the current user is in
       games: [],
+      endedGames: [],
+      
+      trendyStock: {
+        symbol: "",
+        close: "",
+        exchange: ""
+      }
     };
   },
   methods: {
@@ -109,13 +106,19 @@ export default {
       StockService.getSearchStock(this.stockToSearch).then((response) => {
         this.searchStock = response.data;
       })
-    }
+    },
   },
     created() {
-      GameService.getAllGames().then((response) => {
+      GameService.getCurrentGames().then((response) => {
         this.games = response.data;
+      }),
+      StockService.getTrendyStock().then((response) => {
+        this.trendyStock = response.data
+      }),
+      GameService.getEndedGames().then((response) => {
+        this.endedGames = response.data;
       })
-    }
+  }
 }
 </script>
 

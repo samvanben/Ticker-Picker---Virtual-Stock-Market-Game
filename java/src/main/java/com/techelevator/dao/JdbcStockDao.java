@@ -70,20 +70,6 @@ public class JdbcStockDao implements StockDao {
         return stockId;
     }
 
-    public BigDecimal getStockPriceBySymbol(String symbol) {
-        BigDecimal price = new BigDecimal(0);
-        String sql = "SELECT current_share_price FROM stock WHERE symbol = ? ";
-        try{
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, symbol.toUpperCase());
-            if(results.next()) {
-                price = results.getBigDecimal("current_share_price");
-            }
-        } catch (CannotGetJdbcConnectionException e){
-            throw new DaoException( "cannot connect to server or database", e);
-        }
-        return price;
-    }
-
     private Stock mapRowToStock(SqlRowSet results) {
         Stock stock = new Stock();
         stock.setStockId(results.getInt("stock_id"));

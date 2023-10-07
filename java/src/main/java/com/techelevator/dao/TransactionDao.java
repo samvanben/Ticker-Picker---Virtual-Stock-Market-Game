@@ -12,8 +12,6 @@ public interface TransactionDao {
     List<Transaction> getTransactionsByUserGameStock(int userId,  int stockId, int gameId);
     List<Transaction> getTransactionsByUserGame(int userId, int gameId);
     List<Transaction> getTransactionsByUserId(int userId);
-    List<Transaction> getTransactionsByUsername(String username);
-    List<Transaction> getTransactionsByUsernameGame(String username, int gameId);
     boolean createTransactionForStock(int quantity,  int userId, int gameId, String symbol);
     boolean updateTransactionForStock(int quantity,  int userId, int gameId, String symbol);
     int getStockQuantity(int userId, int gameId, String symbol);
