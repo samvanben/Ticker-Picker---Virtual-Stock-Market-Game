@@ -40,20 +40,26 @@ public class JdbcGameDao implements GameDao {
     }
 
     @Override
-    public Map<String, Integer> getListOfPlayersAvailableToBeAdd(int gameId) {
-        Map<String, Integer> players = new HashMap<>();
+    public List<User> getListOfPlayersAvailableToBeAdd(int gameId) {
+        List<User> players = new LinkedList<>();
         String sql = "SELECT * FROM users WHERE user_id NOT IN (SELECT user_id FROM game_user WHERE game_id=?); ";
         try{
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql, gameId);
             while(results.next()) {
-                String username = results.getString("username");
-                int userId = results.getInt("user_id");
-                players.put(username, userId);
+                User user = mapRowToUser(results);
+                players.add(user);
             }
         } catch (CannotGetJdbcConnectionException e){
             throw new DaoException( "cannot connect to server or database", e);
         }
         return players;
+    }
+
+    private User mapRowToUser(SqlRowSet rs) {
+        User user = new User();
+        user.setId(rs.getInt("user_id"));
+        user.setUsername(rs.getString("username"));
+        return user;
     }
 
     @Override
@@ -74,20 +80,43 @@ public class JdbcGameDao implements GameDao {
     }
 
     @Override
-    public Map<String, BigDecimal> orderGameMembersByTotalBalanceByGameId(int gameId) {
-        Map<String, BigDecimal> orderedMap = new LinkedHashMap<>();
-        String sql = "SELECT total_balance, username FROM game_user JOIN users ON users.user_id = game_user.user_id WHERE game_id = ? ORDER BY total_balance desc; ";
+    public List<GameUser> orderGameMembersByTotalBalanceByGameId(int gameId) {
+        List<GameUser> orderedList = new LinkedList<>();
+        String sql = "SELECT users.username, available_balance, total_balance FROM game_user JOIN users ON users.user_id = game_user.user_id WHERE game_id = ? ORDER BY total_balance desc; ";
         try{
             SqlRowSet SqlRowSet = jdbcTemplate.queryForRowSet(sql, gameId);
             while (SqlRowSet.next()){
-                BigDecimal totalBalance = SqlRowSet.getBigDecimal("total_balance");
-                String username = SqlRowSet.getNString("username");
-                orderedMap.put(username, totalBalance);
+                GameUser gameUser = mapRowToGameUserPartially(SqlRowSet);
+                orderedList.add(gameUser);
             }
         } catch (CannotGetJdbcConnectionException e){
             throw new DaoException( "cannot connect to server or database", e);
         }
-        return orderedMap;
+        return orderedList;
+    }
+
+    @Override
+    public List<GameUser> orderGameMembersByAvailableBalanceByGameId(int gameId) {
+        List<GameUser> orderedList = new LinkedList<>();
+        String sql = "SELECT users.username, available_balance, total_balance FROM game_user JOIN users ON users.user_id = game_user.user_id WHERE game_id = ? ORDER BY available_balance desc; ";
+        try{
+            SqlRowSet SqlRowSet = jdbcTemplate.queryForRowSet(sql, gameId);
+            while (SqlRowSet.next()){
+                GameUser gameUser = mapRowToGameUserPartially(SqlRowSet);
+                orderedList.add(gameUser);
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return orderedList;
+    }
+
+    private GameUser mapRowToGameUserPartially(SqlRowSet results) {
+        GameUser gameUser = new GameUser();
+        gameUser.setUsername((results.getString("username")));
+        gameUser.setAvailableBalance((results.getBigDecimal("available_balance")));
+        gameUser.setTotalBalance((results.getBigDecimal("total_balance")));
+        return gameUser;
     }
 
     @Override

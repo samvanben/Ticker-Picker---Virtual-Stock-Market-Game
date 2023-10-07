@@ -2,12 +2,11 @@ package com.techelevator.controller;
 
 import com.techelevator.dao.*;
 import com.techelevator.exception.DaoException;
-import com.techelevator.model.Game;
-import com.techelevator.model.GameUser;
-import com.techelevator.model.StockApiDTO;
+import com.techelevator.model.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
@@ -72,14 +71,17 @@ public class GameController {
     }
 
     @RequestMapping(path = "/{gameId}/add-player", method = RequestMethod.GET)
-    public Map<String, Integer> listPlayersForAdding(@PathVariable int gameId){
-        Map<String, Integer> players = gameDao.getListOfPlayersAvailableToBeAdd(gameId);
-        return players;
+    public List<User> listPlayersForAdding(@PathVariable int gameId){
+        return gameDao.getListOfPlayersAvailableToBeAdd(gameId);
     }
 
-    @RequestMapping(path = "/{gameId}/leaderboard", method = RequestMethod.GET)
-    public Map<String, BigDecimal> LeaderboardOfAGame(@PathVariable int gameId){
-        Map<String, BigDecimal> orderedMap = new LinkedHashMap<>();
+    @RequestMapping(path = "/{gameId}/leaderboard/available-balance", method = RequestMethod.GET)
+    public List<GameUser> LeaderboardOfAGameByAvailableBalance(@PathVariable int gameId){
+        return gameDao.orderGameMembersByAvailableBalanceByGameId(gameId);
+    }
+
+    @RequestMapping(path = "/{gameId}/leaderboard/total-balance", method = RequestMethod.GET)
+    public List<GameUser> LeaderboardOfAGameByTotalBalance(@PathVariable int gameId){
         return gameDao.orderGameMembersByTotalBalanceByGameId(gameId);
     }
 
@@ -141,10 +143,16 @@ public class GameController {
     }
 
     @RequestMapping(path = "{gameId}/buy/{symbol}/{numbers}", method = RequestMethod.PUT)
-    public boolean buyStock(@PathVariable String symbol, @PathVariable int gameId, @PathVariable int numbers, Principal user, @RequestBody StockApiDTO stock) {
+    public boolean buyStock(@PathVariable String symbol, @PathVariable int gameId, @PathVariable int numbers, Principal user) {
         // get current user's user id
         String username = user.getName();
         int userId = userDao.findIdByUsername(username);
+
+        // call the api to get the price of stock
+        RestTemplate restTemplate = new RestTemplate();
+        String API_BASE_URL = "https://api.twelvedata.com/eod";
+        String API_KEY = "&apikey=b2f7d6135e3341aeb6b6c2171c137ce7";
+        StockApiDTO stock = restTemplate.getForObject(API_BASE_URL + "?symbol=" + symbol.toUpperCase() + "&dp=2&" + API_KEY, StockApiDTO.class);
 
         // get price of the stock
         BigDecimal stockPrice = BigDecimal.valueOf(stock.getClose());
@@ -170,10 +178,16 @@ public class GameController {
     }
 
     @RequestMapping(path = "{gameId}/sell/{symbol}/{numbers}", method = RequestMethod.PUT)
-    public boolean sellStock(@PathVariable String symbol, @PathVariable int gameId, @PathVariable int numbers, Principal user, @RequestBody StockApiDTO stock) {
+    public boolean sellStock(@PathVariable String symbol, @PathVariable int gameId, @PathVariable int numbers, Principal user) {
         // get current user's user id
         String username = user.getName();
         int userId = userDao.findIdByUsername(username);
+
+        // call the api to get the price of stock
+        RestTemplate restTemplate = new RestTemplate();
+        String API_BASE_URL = "https://api.twelvedata.com/eod";
+        String API_KEY = "&apikey=b2f7d6135e3341aeb6b6c2171c137ce7";
+        StockApiDTO stock = restTemplate.getForObject(API_BASE_URL + "?symbol=" + symbol.toUpperCase() + "&dp=2&" + API_KEY, StockApiDTO.class);
 
         if(numbers <= transactionDao.getStockQuantity(userId, gameId, symbol)){
             BigDecimal stockPrice = BigDecimal.valueOf(stock.getClose());
@@ -192,7 +206,13 @@ public class GameController {
         return false;
     }
 
-    private boolean sellStock(@PathVariable String symbol, @PathVariable int gameId, @PathVariable int numbers, int userId, @RequestBody StockApiDTO stock) {
+    private boolean sellStock(@PathVariable String symbol, @PathVariable int gameId, @PathVariable int numbers, int userId) {
+        // call the api to get the price of stock
+        RestTemplate restTemplate = new RestTemplate();
+        String API_BASE_URL = "https://api.twelvedata.com/eod";
+        String API_KEY = "&apikey=b2f7d6135e3341aeb6b6c2171c137ce7";
+        StockApiDTO stock = restTemplate.getForObject(API_BASE_URL + "?symbol=" + symbol.toUpperCase() + "&dp=2&" + API_KEY, StockApiDTO.class);
+
         if(numbers <= transactionDao.getStockQuantity(userId, gameId, symbol)){
             BigDecimal stockPrice = BigDecimal.valueOf(stock.getClose());
             // get transaction amount and commission, proceed to sell
@@ -217,8 +237,15 @@ public class GameController {
         return transactionDao.listActiveStocks(userId, gameId);
     }
 
+    @RequestMapping(path = "/{gameId}/shares", method = RequestMethod.GET)
+    public List<Transaction> getListOfTransactionStocks(@PathVariable int gameId, Principal user){
+        String username = user.getName();
+        int userId = userDao.findIdByUsername(username);
+        return transactionDao.listAllStocks(userId, gameId);
+    }
+
     @RequestMapping(path = "/{gameId}/end-game", method = RequestMethod.GET)
-    public boolean endGame(@PathVariable int gameId, @RequestBody StockApiDTO stock){
+    public boolean endGame(@PathVariable int gameId){
         // get list of game player's userId
         List<GameUser> players = gameUserDao.getPlayerByGameId(gameId);
         List<Integer> listOfUserId = new ArrayList<>();
@@ -229,7 +256,14 @@ public class GameController {
         for(Integer currentUserId: listOfUserId){
             Map<String, Integer> holdings = transactionDao.listActiveStocks(currentUserId, gameId);
             for(Map.Entry<String, Integer> entry: holdings.entrySet()){
-                sellStock(entry.getKey(), gameId, entry.getValue(), currentUserId, stock);
+
+                // call the api to get the price of stock, in this case key is the stock symbol
+                RestTemplate restTemplate = new RestTemplate();
+                String API_BASE_URL = "https://api.twelvedata.com/eod";
+                String API_KEY = "&apikey=b2f7d6135e3341aeb6b6c2171c137ce7";
+                StockApiDTO stock = restTemplate.getForObject(API_BASE_URL + "?symbol=" + entry.getKey().toUpperCase() + "&dp=2&" + API_KEY, StockApiDTO.class);
+
+                sellStock(entry.getKey(), gameId, entry.getValue(), currentUserId);
             }
         }
         // check if there are any holding shares for all users, return true if no, false if yes

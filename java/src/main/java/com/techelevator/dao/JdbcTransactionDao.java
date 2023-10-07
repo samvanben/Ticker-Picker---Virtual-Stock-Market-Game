@@ -205,4 +205,27 @@ public class JdbcTransactionDao implements TransactionDao {
         }
         return activeStocks;
     }
+
+    @Override
+    public List<Transaction> listAllStocks(int userId, int gameId) {
+        List<Transaction> stocks = new ArrayList<>();
+        String sql = "SELECT * FROM transaction WHERE user_id=? AND game_id=?; ";
+        try{
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId, gameId);
+            while (results.next()){
+                Transaction transaction = new Transaction();
+                String symbol = results.getString("stock_symbol");
+                int share = results.getInt("quantity");
+
+                transaction.setSymbol(symbol);
+                transaction.setQuantity(share);
+                transaction.setGameId(results.getInt("game_id"));
+                transaction.setUserId(results.getInt("user_id"));
+                stocks.add(transaction);
+            }
+        } catch (CannotGetJdbcConnectionException e){
+            throw new DaoException( "cannot connect to server or database", e);
+        }
+        return stocks;
+    }
 }
