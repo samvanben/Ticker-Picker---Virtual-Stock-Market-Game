@@ -70,18 +70,6 @@ public class GameController {
         return gameUserDao.getPlayerByGameId(gameId);
     }
 
-    @RequestMapping(path = "/{gameId}/add-player", method = RequestMethod.GET)
-    public List<User> listPlayersForAdding(@PathVariable int gameId) {
-        List <User> users = gameDao.getListOfPlayersAvailableToBeAdd(gameId);
-        return users;
-    }
-
-//    @RequestMapping(path = "/{gameId}/leaderboard", method = RequestMethod.GET)
-//    public Map<String, BigDecimal> LeaderboardOfAGame(@PathVariable int gameId) {
-//        Map<String, BigDecimal> orderedMap = new LinkedHashMap<>();
-//        return gameDao.orderGameMembersByTotalBalanceByGameId(gameId);
-//    }
-
     @RequestMapping(path = "/{gameId}/leaderboard/available-balance", method = RequestMethod.GET)
     public List<GameUser> LeaderboardOfAGameByAvailableBalance(@PathVariable int gameId){
         return gameDao.orderGameMembersByAvailableBalanceByGameId(gameId);

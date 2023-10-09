@@ -15,13 +15,6 @@ public class GameUser {
     private BigDecimal totalBalance;
     private String username = "";
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
     public GameUser() {
     }
     public GameUser(int gameId, int userId, BigDecimal availableBalance, BigDecimal totalBalance) {
@@ -44,6 +37,14 @@ public class GameUser {
 
     public void setGameUserId(int gameUserId) {
         this.gameUserId = gameUserId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public int getGameId() {

@@ -10,5 +10,4 @@ public interface StockDao {
     List<Stock> getAllStocks();
     List<Stock> getStocksByOneUserOfGame(int userId, int gameId);
     int createStock(Stock stock);
-    BigDecimal getStockPriceBySymbol(String symbol);
 }

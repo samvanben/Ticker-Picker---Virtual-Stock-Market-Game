@@ -46,6 +46,17 @@ CREATE TABLE transaction (
 );
 
 CREATE TABLE game_user (
+<<<<<<< HEAD
+	game_user_id SERIAL,
+	game_id integer,
+	user_id integer,
+	available_balance numeric default 100000,
+	total_balance numeric default 100000,
+	username varchar(50),
+	CONSTRAINT PK_game_user PRIMARY KEY (game_user_id),
+	CONSTRAINT FK_game_user_user FOREIGN KEY (user_id) REFERENCES users (user_id),
+	CONSTRAINT FK_game_user_username FOREIGN KEY (username) REFERENCES users (username),
+=======
    game_user_id SERIAL,
    game_id integer,
    user_id integer,
@@ -55,6 +66,7 @@ CREATE TABLE game_user (
    CONSTRAINT PK_game_user PRIMARY KEY (game_user_id),
    CONSTRAINT FK_game_user_user FOREIGN KEY (user_id) REFERENCES users (user_id),
    CONSTRAINT FK_game_user_username FOREIGN KEY (username) REFERENCES users (username),
+>>>>>>> main
     CONSTRAINT FK_game_user_game FOREIGN KEY (game_id) REFERENCES game (game_id)
 );
 

@@ -52,42 +52,6 @@ public class JdbcGameUserDao implements GameUserDao{
         return gameUserId;
     }
 
-    @Override
-    public boolean updateGameUser(GameUser updatedGameUser, int gameUserId) {
-        String sql = "UPDATE game_user SET game_id = ?, user_id = ?, available_balance = ?, total_balance = ? WHERE game_user_id = ?; ";
-        try{
-            int numberOfRows = jdbcTemplate.update(sql, updatedGameUser.getGameId(), updatedGameUser.getUserId(),
-                    updatedGameUser.getAvailableBalance(), updatedGameUser.getTotalBalance(), gameUserId);
-            if(numberOfRows == 0 ){
-                throw new DaoException("no rows affected");
-            }
-        } catch (CannotGetJdbcConnectionException e){
-            throw new DaoException( "cannot connect to server or database", e);
-        } catch (DataIntegrityViolationException e){
-            throw new DaoException("data integrity violation", e);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean deleteGameUser(int userId) {
-        boolean success = false;
-        String sql = "Delete * from game_user where game_user_id = ?";
-        try{
-            int numberOfRows = jdbcTemplate.update(sql, userId);
-            if(numberOfRows == 0 ){
-                throw new DaoException("no rows affected");
-            }else{
-                success = true;
-            }
-        } catch (CannotGetJdbcConnectionException e){
-        throw new DaoException( "cannot connect to server or database", e);
-    } catch (DataIntegrityViolationException e){
-        throw new DaoException("data integrity violation", e);
-    }
-        return success;
-    }
-
     private GameUser mapRowToGameUser(SqlRowSet results) {
         GameUser gameUser = new GameUser();
         gameUser.setGameUserId((results.getInt("game_user_id")));
