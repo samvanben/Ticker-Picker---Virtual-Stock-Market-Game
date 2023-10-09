@@ -1,4 +1,5 @@
 <template>
+<div id="main-bin">
   <div id="invitePlayers">
       <form id = 'formId'>
           <h1>Add Players!</h1>
@@ -9,9 +10,10 @@
                   <button v-on:click.prevent="invite(player.id)">Add</button>
               </tr>
           </table>
-          <router-link v-bind:to="{name: 'lobby'}" v-if="$store.state.token != ''"> <button>Trading Floor</button></router-link>
+          <router-link v-bind:to="{name: 'lobby'}" v-if="$store.state.token != ''"> <button id="last-button">Trading Floor</button></router-link>
       </form>
   </div>
+</div>  
 </template>
 
 <script scoped>
@@ -109,9 +111,6 @@ form input:first-of-type {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100vw;
-    margin-left: 35vw;
-    margin-right: 35vw;
   }
   form button {
   margin-top: 2rem;
@@ -133,8 +132,18 @@ form button:hover {
   display: flex;
   text-align: center;
 }
+#main-bin {
+  display: flex;
+  justify-content: center;
+}
 .player-row button {
   margin-left: 20px;
+}
+.player-row td {
+  margin-top: 4px;
+}
+#last-button {
+  margin-bottom: 40px;
 }
 
 </style>
